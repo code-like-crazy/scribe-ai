@@ -1,9 +1,44 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ScribeAI" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!-- Base application theme (Light). -->
+    <style name="Base.Theme.ScribeAI" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <!-- Accent color. -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/scribe_white_background</item>
+        <item name="android:windowLightStatusBar">true</item>        <!-- Make status bar icons dark -->
+        <!-- Background color. -->
+        <item name="android:colorBackground">@color/scribe_white_background</item>        <!-- Corrected reference -->
+        <item name="colorOnBackground">@color/colorOnBackground</item>
+        <!-- Surface color (cards, sheets, menus) -->
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <!-- Error color -->
+        <item name="colorError">@color/colorError</item>
+        <item name="colorOnError">@color/colorOnError</item>
+
+        <!-- Apply custom button style -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
     </style>
 
+    <!-- Inherit from Base Theme -->
     <style name="Theme.ScribeAI" parent="Base.Theme.ScribeAI" />
+
+    <!-- Custom Button Style -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <!-- Shape Appearance for Rounded Corners -->
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>        <!-- Rounded corners as per PRD -->
+    </style>
 </resources>

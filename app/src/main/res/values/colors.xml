@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- ScribeAI Palette -->
+    <color name="scribe_green_primary">#58CC02</color>    <!-- Key Actions -->
+    <color name="scribe_blue_secondary">#1CB0F6</color>    <!-- Secondary Buttons -->
+    <color name="scribe_yellow_accent">#FFD700</color>    <!-- Accents -->
+    <color name="scribe_pink_accent">#FF9EAC</color>    <!-- Accents -->
+    <color name="scribe_white_background">#F9F9F9</color>    <!-- Light Background -->
+    <color name="scribe_charcoal_text">#2E2E2E</color>    <!-- Dark Text/Background -->
+
+    <!-- Semantic Colors (Light Theme) -->
+    <color name="colorPrimary">@color/scribe_green_primary</color>
+    <color name="colorPrimaryVariant">#4CAF50</color>    <!-- Darker Green -->
+    <color name="colorOnPrimary">@color/white</color>
+
+    <color name="colorSecondary">@color/scribe_blue_secondary</color>
+    <color name="colorSecondaryVariant">#03A9F4</color>    <!-- Slightly different Blue -->
+    <color name="colorOnSecondary">@color/white</color>
+
+    <color name="colorAccent">@color/scribe_yellow_accent</color>
+
+    <color name="colorBackground">@color/scribe_white_background</color>
+    <color name="colorOnBackground">@color/scribe_charcoal_text</color>
+
+    <color name="colorSurface">@color/white</color>    <!-- Card backgrounds etc. -->
+    <color name="colorOnSurface">@color/scribe_charcoal_text</color>
+
+    <color name="colorError">#B00020</color>
+    <color name="colorOnError">@color/white</color>
 </resources>

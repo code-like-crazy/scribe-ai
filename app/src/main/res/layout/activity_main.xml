@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" tools:context=".MainActivity">
 
-    <!-- Search Bar -->
-    <SearchView android:id="@+id/searchView" android:layout_width="match_parent" android:layout_height="wrap_content" android:queryHint="Search notes..." />
+    <com.google.android.material.appbar.AppBarLayout android:id="@+id/appBarLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:fitsSystemWindows="true">
 
-    <!-- Notes List -->
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/notesRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent" />
+        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:title="@string/app_name" app:layout_scrollFlags="scroll|enterAlways|snap">
 
-    <!-- Add Note Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/fabAddNote" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end" android:layout_margin="16dp" android:src="@android:drawable/ic_input_add" />
-</LinearLayout>
+            <!-- Search View integrated into Toolbar -->
+            <SearchView android:id="@+id/searchView" android:layout_width="match_parent" android:layout_height="wrap_content" android:iconifiedByDefault="true" android:queryHint="Search notes..." app:showAsAction="ifRoom|collapseActionView" app:actionViewClass="android.widget.SearchView" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/notesRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="8dp" android:clipToPadding="false" app:layout_behavior="@string/appbar_scrolling_view_behavior" tools:listitem="@layout/note_item" />
+    <!-- Added padding and tools:listitem -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/fabAddNote" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end" android:layout_margin="16dp" android:contentDescription="@string/add_new_note" app:srcCompat="@drawable/ic_add_24" />
+    <!-- FAB: Added content description -->
+    <!-- FAB: Changed to a vector drawable -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

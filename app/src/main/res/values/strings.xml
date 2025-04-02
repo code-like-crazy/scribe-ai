@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ScribeAI</string>
+    <string name="add_new_note">Add New Note</string>    <!-- Content description for FAB -->
 </resources>

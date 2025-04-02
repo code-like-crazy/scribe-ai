@@ -1,7 +1,32 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ScribeAI" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- Base application theme (Dark). -->
+    <style name="Base.Theme.ScribeAI" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>        <!-- Consider adjusting for dark theme contrast if needed -->
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>        <!-- Consider adjusting for dark theme contrast if needed -->
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <!-- Accent color. -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/scribe_charcoal_text</item>
+        <item name="android:windowLightStatusBar">false</item>        <!-- Make status bar icons light -->
+        <!-- Background color. -->
+        <item name="android:colorBackground">@color/scribe_charcoal_text</item>
+        <item name="colorOnBackground">@color/scribe_white_background</item>
+        <!-- Surface color (cards, sheets, menus) -->
+        <item name="colorSurface">#3C3C3C</item>        <!-- Slightly lighter than background -->
+        <item name="colorOnSurface">@color/scribe_white_background</item>
+        <!-- Error color -->
+        <item name="colorError">#CF6679</item>        <!-- Standard Material Dark Error -->
+        <item name="colorOnError">@color/black</item>
+
+        <!-- Apply custom button style (inherits from light theme definition) -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
     </style>
+
+    <!-- Theme.ScribeAI inherits Base.Theme.ScribeAI implicitly via DayNight parent -->
 </resources>

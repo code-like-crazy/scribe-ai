@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="8dp" android:layout_marginVertical="4dp" app:cardCornerRadius="16dp" app:cardElevation="4dp">    <!-- Rounded corners -->
 
-    <TextView android:id="@+id/tvNoteContent" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
 
-    <TextView android:id="@+id/tvNoteDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="#888"/>
-</LinearLayout>
+        <TextView android:id="@+id/textViewNoteTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="?attr/textAppearanceTitleMedium" android:maxLines="1" android:ellipsize="end" tools:text="Note Title Example" />
+
+        <TextView android:id="@+id/textViewNoteContentSnippet" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textAppearance="?attr/textAppearanceBodyMedium" android:maxLines="3" android:ellipsize="end" tools:text="This is a snippet of the note content to give the user a preview..." />
+        <!-- Show a few lines of content -->
+
+        <!-- Optional: Add ImageView for image notes or icons for type later -->
+        <ImageView android:id="@+id/imageViewNoteTypeIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:visibility="gone" tools:srcCompat="@drawable/ic_launcher_foreground" tools:visibility="visible" />
+        <!-- Hidden by default -->
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
