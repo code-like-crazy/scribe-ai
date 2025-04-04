@@ -23,6 +23,7 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -96,7 +97,21 @@
                 tools:srcCompat="@tools:sample/backgrounds/scenic" tools:visibility="visible" />
             <!-- tools:visibility for layout preview -->            <!--
             TODO: Add container for drawing canvas -->
+
+            <!-- Save Button - Lively Green -->
+            <Button
+                android:id="@+id/button_save_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/action_save"
+                android:backgroundTint="@color/scribe_green_primary"
+                android:textColor="@android:color/white"
+                app:cornerRadius="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="18sp" />
+
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>    <!--
-    TODO: Add Save FAB or menu item later -->
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

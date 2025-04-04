@@ -23,4 +23,20 @@
     <string name="empty_notes_message">No notes yet!</string>
     <string name="add_first_note">Add your first note</string>
 
+    <!-- Note Preview Screen -->
+    <string name="note_preview_title">Note Preview</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="delete_note">Delete Note</string>
+    <string name="error_loading_note">Error loading note</string>
+    <string name="error_invalid_note_id">Invalid note ID</string>
+    <string name="delete_note_not_implemented">Delete functionality not yet implemented.</string>
+
+    <!-- Delete Confirmation Dialog -->
+    <string name="delete_confirmation_title">Delete Note?</string>
+    <string name="delete_confirmation_message">Are you sure you want to delete this note
+        permanently?</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="note_deleted_confirmation">Note deleted</string>
+
 </resources>

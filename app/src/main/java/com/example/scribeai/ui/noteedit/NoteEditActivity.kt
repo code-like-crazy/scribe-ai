@@ -6,8 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+// Removed Menu and MenuItem imports
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -74,6 +73,7 @@ class NoteEditActivity : AppCompatActivity() {
 
         setupInputModeButtons()
         setupActivityResultLaunchers()
+        setupSaveButton() // Add call to setup save button listener
     }
 
     private fun observeNoteDetails() {
@@ -178,25 +178,20 @@ class NoteEditActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_note_edit, menu)
+    // Setup listener for the new save button
+    private fun setupSaveButton() {
+        binding.buttonSaveNote.setOnClickListener {
+            saveNote()
+        }
+    }
+
+    // Handle back navigation (from toolbar home button)
+    override fun onSupportNavigateUp(): Boolean {
+        // TODO: Add confirmation dialog if changes are unsaved
+        finish()
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                // TODO: Add confirmation dialog if changes are unsaved
-                finish() // Or navigateUp() if part of a task stack
-                true
-            }
-            R.id.action_save -> {
-                saveNote()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     private fun saveNote() {
         val title = binding.titleEditText.text.toString().trim()
@@ -211,8 +206,9 @@ class NoteEditActivity : AppCompatActivity() {
         // ViewModel now handles imageUri internally based on selectedImageUri LiveData
         viewModel.saveNote(title, content)
 
-        // Show confirmation and finish
-        Snackbar.make(binding.root, R.string.note_saved_confirmation, Snackbar.LENGTH_SHORT).show()
+        // Show confirmation, set result, and finish
+        Toast.makeText(this, R.string.note_saved_confirmation, Toast.LENGTH_SHORT).show() // Use Toast for simplicity
+        setResult(Activity.RESULT_OK) // Signal success to MainActivity/NotePreviewActivity
         finish()
     }
 

@@ -32,6 +32,19 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
         </activity>
 
+        <!-- Declaration for the new Note Preview Activity -->
+        <activity
+            android:name=".ui.notepreview.NotePreviewActivity"
+            android:exported="false"
+            android:label="@string/note_preview_title"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.ScribeAI">
+            <!-- Parent activity meta-data -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>

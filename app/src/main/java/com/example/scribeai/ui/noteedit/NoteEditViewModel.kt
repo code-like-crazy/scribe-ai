@@ -93,6 +93,12 @@ class NoteEditViewModel(
             _selectedImageUri.postValue(null)
         }
     }
+
+    fun deleteNote(note: Note) {
+        viewModelScope.launch {
+            repository.delete(note)
+        }
+    }
 }
 
 // Factory for creating NoteEditViewModel with dependencies

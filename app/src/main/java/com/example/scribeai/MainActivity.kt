@@ -16,10 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.NoteRepository
 import com.example.scribeai.databinding.ActivityMainBinding // Import generated ViewBinding class
-import com.example.scribeai.ui.noteedit.NoteEditActivity // Import NoteEditActivity
+import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.notelist.NoteListViewModel
 import com.example.scribeai.ui.notelist.NoteListViewModelFactory
 import com.example.scribeai.ui.notelist.NotesAdapter
+import com.example.scribeai.ui.notepreview.NotePreviewActivity // Import NotePreviewActivity
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -101,26 +102,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Helper function to launch NoteEditActivity (used by FAB and empty state button)
-    private fun launchNoteEditActivity(noteId: Long? = null) {
-        val intent = Intent(this, NoteEditActivity::class.java).apply {
-            if (noteId != null) {
-                putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId)
-            }
-        }
-        startActivity(intent)
+    // Helper function to launch NoteEditActivity (for creating new notes)
+    private fun launchNoteEditActivity() {
+        val intent = Intent(this, NoteEditActivity::class.java)
+        // No ID needed for new note
+        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE) // Use startActivityForResult to refresh list
     }
 
-    // Update setupFab and setupRecyclerView to use the helper function
+    // Helper function to launch NotePreviewActivity (for viewing existing notes)
+    private fun launchNotePreviewActivity(noteId: Long) {
+        val intent = Intent(this, NotePreviewActivity::class.java).apply {
+            putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Reuse the same extra key
+        }
+        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE) // Use startActivityForResult to refresh list
+    }
+
+    // Update setupFab and setupRecyclerView to use the correct helper functions
     private fun setupFab() {
         binding.fabAddNote.setOnClickListener {
-            launchNoteEditActivity() // No ID for new note
+            launchNoteEditActivity() // Launch edit screen for new note
         }
     }
 
     private fun setupRecyclerView() {
         notesAdapter = NotesAdapter { note ->
-            launchNoteEditActivity(note.id) // Pass ID for editing
+            launchNotePreviewActivity(note.id) // Launch preview screen for existing note
         }
 
         binding.notesRecyclerView.apply {
@@ -128,5 +134,22 @@ class MainActivity : AppCompatActivity() {
             adapter = notesAdapter
             // Optional: Add ItemDecoration for spacing if needed
         }
+    }
+
+    // Handle results from NoteEditActivity and NotePreviewActivity to refresh list if needed
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NOTE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            // A note was potentially created, edited, or deleted.
+            // The ViewModel should ideally handle refreshing the list automatically
+            // if data source changes are observed correctly.
+            // For simplicity, we can just re-observe or trigger a refresh manually if needed.
+            // Toast.makeText(this, "List might need refresh", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    companion object {
+        private const val NOTE_ACTIVITY_REQUEST_CODE = 1 // Request code for starting note activities
     }
 }
