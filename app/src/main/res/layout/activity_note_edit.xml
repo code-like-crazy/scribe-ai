@@ -97,15 +97,20 @@
                 tools:srcCompat="@tools:sample/backgrounds/scenic" tools:visibility="visible" />
             <!-- tools:visibility for layout preview -->
 
-            <!-- Drawing Canvas Container -->
-            <com.example.scribeai.ui.views.DrawingView
-                android:id="@+id/drawing_view"
+            <!-- Drawing Preview Container -->
+            <ImageView
+                android:id="@+id/drawing_preview_image"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:layout_marginTop="16dp"
+                android:scaleType="centerInside"
                 android:visibility="gone"
-                android:background="@android:color/darker_gray" />
-            <!-- Background for visibility during layout design -->
+                android:background="@android:color/darker_gray"
+                android:contentDescription="@string/drawing_preview_desc"
+                tools:srcCompat="@tools:sample/backgrounds/scenic"
+                tools:visibility="visible" />
+            <!-- Placeholder background and content description -->
+
 
             <!-- Save Button - Lively Green -->
             <Button

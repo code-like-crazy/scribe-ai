@@ -56,6 +56,16 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- Drawing Activity Declaration -->
+        <activity
+            android:name=".ui.drawing.DrawingActivity"
+            android:exported="false"
+            android:label="Draw Note"
+            android:theme="@style/Theme.ScribeAI.NoActionBar" /> <!-- Use NoActionBar or customize
+        theme -->
+        <!-- No parent activity needed as it's launched for result -->
+
+
     </application>
 
 </manifest>

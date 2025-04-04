@@ -15,6 +15,7 @@ class DrawingView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var backgroundBitmap: Bitmap? = null // To hold the initial drawing
     private var currentPath = Path()
     private val paths = ArrayList<Pair<Path, Paint>>() // Store paths and their paints
     private val paint = Paint().apply {
@@ -28,10 +29,16 @@ class DrawingView @JvmOverloads constructor(
 
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
+    private var lastX = 0f // Store the last X coordinate
+    private var lastY = 0f // Store the last Y coordinate
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // Draw all completed paths
+        // Draw the background bitmap first if it exists
+        backgroundBitmap?.let {
+            canvas.drawBitmap(it, 0f, 0f, null)
+        }
+        // Draw all completed paths on top
         for ((path, paint) in paths) {
             canvas.drawPath(path, paint)
         }
@@ -56,16 +63,28 @@ class DrawingView @JvmOverloads constructor(
     private fun touchStart() {
         currentPath.reset()
         currentPath.moveTo(motionTouchEventX, motionTouchEventY)
+        lastX = motionTouchEventX // Initialize last points
+        lastY = motionTouchEventY
     }
 
     private fun touchMove() {
-        currentPath.lineTo(motionTouchEventX, motionTouchEventY)
+        // Calculate midpoint for quadratic Bezier curve
+        val midX = (motionTouchEventX + lastX) / 2
+        val midY = (motionTouchEventY + lastY) / 2
+        // Use quadTo for smoother curves
+        currentPath.quadTo(lastX, lastY, midX, midY)
+        // Update last points
+        lastX = motionTouchEventX
+        lastY = motionTouchEventY
     }
 
     private fun touchUp() {
+        // Ensure the final segment is drawn
+        currentPath.lineTo(motionTouchEventX, motionTouchEventY)
+
         // Create a new Paint object for this path to capture current settings
         val pathPaint = Paint(paint)
-        // Add the completed path and its paint to the list
+        // Add a *copy* of the completed path and its paint to the list
         paths.add(Pair(Path(currentPath), pathPaint))
         // Reset the current path for the next stroke
         currentPath.reset()
@@ -78,9 +97,20 @@ class DrawingView @JvmOverloads constructor(
         invalidate()
     }
 
+    // Function to load an existing bitmap as the background
+    fun loadBitmap(bitmap: Bitmap) {
+        // Ensure the bitmap is mutable if needed, or create a mutable copy
+        backgroundBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        // Clear existing paths if loading a new background
+        paths.clear()
+        currentPath.reset()
+        invalidate() // Redraw with the new background
+    }
+
     // Function to get the current drawing as a Bitmap
     fun getBitmap(): Bitmap {
         // Create a bitmap with the same dimensions as the view
+        // Consider making background transparent if needed: Bitmap.Config.ARGB_8888
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         // Create a canvas associated with the bitmap
         val canvas = Canvas(bitmap)

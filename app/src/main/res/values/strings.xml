@@ -43,5 +43,7 @@
     <string name="dialog_title_select_image_source">Select Image Source</string>
     <string name="dialog_option_camera">Camera</string>
     <string name="dialog_option_gallery">Gallery</string>
+    <string name="drawing_preview_desc">Drawing Preview</string> <!-- Added for drawing preview
+    ImageView -->
 
 </resources>

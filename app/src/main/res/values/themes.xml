@@ -32,6 +32,12 @@
     <!-- Inherit from Base Theme -->
     <style name="Theme.ScribeAI" parent="Base.Theme.ScribeAI" />
 
+    <!-- Theme for Activities without an ActionBar (like DrawingActivity) -->
+    <style name="Theme.ScribeAI.NoActionBar" parent="Theme.ScribeAI">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!-- AppBar Theme -->
     <style name="Theme.ScribeAI.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
 
@@ -47,6 +53,6 @@
     <style name="ShapeAppearance.App.SmallComponent"
         parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>        <!-- Rounded corners as per PRD -->
+        <item name="cornerSize">16dp</item>
     </style>
 </resources>
