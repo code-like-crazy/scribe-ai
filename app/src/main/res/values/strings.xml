@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ScribeAI</string>
+    <string name="hero_subtitle">Capture, organize, and find your notes effortlessly.</string>
     <string name="add_new_note">Add New Note</string>    <!-- Content description for FAB -->
+    <string name="section_title_notes">Your Notes</string>
 
     <!-- Note Edit Screen -->
     <string name="title_new_note">New Note</string>
@@ -13,7 +15,7 @@
     Updated error message -->
     <string name="error_empty_tag">Tag cannot be empty</string> <!-- Added -->
     <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
-    <string name="search_hint">Search notes...</string>    <!-- Added for MainActivity search -->
+    <string name="search_notes_hint">Search notes...</string>    <!-- Renamed from search_hint -->
     <string name="action_discard">Discard</string> <!-- Added for Snackbar action -->
 
     <!-- Input Mode Selection -->
@@ -24,8 +26,11 @@
     <string name="image_preview_desc">Image Preview</string>    <!-- Added for ImageView -->
 
     <!-- Empty State -->
-    <string name="empty_notes_message">No notes yet!</string>
+    <string name="empty_state_message">No notes yet! Tap the + button to create one.</string> <!--
+    Renamed and updated -->
     <string name="add_first_note">Add your first note</string>
+    <string name="note_author_placeholder">By Placeholder Author</string> <!-- Placeholder for note
+    item -->
 
     <!-- Note Preview Screen -->
     <string name="note_preview_title">Note Preview</string>

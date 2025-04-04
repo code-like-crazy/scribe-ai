@@ -2,25 +2,27 @@ package com.example.scribeai
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.View // Import View
-import android.widget.SearchView // Use android.widget.SearchView for compatibility
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible // Import isVisible extension
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scribeai.data.AppDatabase
+import com.example.scribeai.data.Note
 import com.example.scribeai.data.NoteRepository
-import com.example.scribeai.databinding.ActivityMainBinding // Import generated ViewBinding class
+import com.example.scribeai.databinding.ActivityMainBinding
 import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.notelist.NoteListViewModel
 import com.example.scribeai.ui.notelist.NoteListViewModelFactory
 import com.example.scribeai.ui.notelist.NotesAdapter
-import com.example.scribeai.ui.notepreview.NotePreviewActivity // Import NotePreviewActivity
+import com.example.scribeai.ui.notepreview.NotePreviewActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -43,10 +45,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up the Toolbar
-        setSupportActionBar(binding.toolbar)
-
-        // Setup RecyclerView Adapter
+        // Setup RecyclerView Adapter (needs ViewModel)
         setupRecyclerView()
 
         // Setup FAB click listener
@@ -57,28 +56,19 @@ class MainActivity : AppCompatActivity() {
 
         // Observe notes from ViewModel
         observeNotes()
-
-        // Setup Empty State Button Listener
-        setupEmptyStateButton()
     }
 
-
     private fun setupSearchView() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // Optional: Handle submission if needed (e.g., close keyboard)
-                return false // Let the system handle default behavior (usually nothing)
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                noteListViewModel.setSearchQuery(s.toString())
             }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // Update ViewModel with the new search query
-                noteListViewModel.setSearchQuery(newText.orEmpty())
-                return true // Indicate we handled the text change
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun observeNotes() {
+     private fun observeNotes() {
         // Use lifecycleScope and repeatOnLifecycle for safe collection from Flows
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -87,18 +77,11 @@ class MainActivity : AppCompatActivity() {
                     notesAdapter.submitList(notesList)
                     Log.d("MainActivity", "Notes observed: ${notesList.size}")
 
-                    // Toggle empty state visibility
-                    binding.notesRecyclerView.isVisible = notesList.isNotEmpty()
-                    binding.emptyStateLayout.isVisible = notesList.isEmpty()
+                    // Toggle empty state visibility using the new layout IDs
+                    binding.recyclerViewNotes.isVisible = notesList.isNotEmpty()
+                    binding.textViewEmptyState.isVisible = notesList.isEmpty()
                 }
             }
-        }
-    }
-
-    private fun setupEmptyStateButton() {
-        binding.emptyStateAddButton.setOnClickListener {
-            // Same action as FAB
-            launchNoteEditActivity()
         }
     }
 
@@ -117,7 +100,6 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE) // Use startActivityForResult to refresh list
     }
 
-    // Update setupFab and setupRecyclerView to use the correct helper functions
     private fun setupFab() {
         binding.fabAddNote.setOnClickListener {
             launchNoteEditActivity() // Launch edit screen for new note
@@ -125,31 +107,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        notesAdapter = NotesAdapter { note ->
-            launchNotePreviewActivity(note.id) // Launch preview screen for existing note
-        }
+        // Initialize adapter with both click listeners
+        notesAdapter = NotesAdapter(
+            onItemClicked = { note ->
+                launchNotePreviewActivity(note.id) // Launch preview screen for existing note
+            },
+            onDeleteClicked = { note ->
+                showDeleteConfirmationDialog(note) // Show confirmation before deleting
+            }
+        )
 
-        binding.notesRecyclerView.apply {
+        binding.recyclerViewNotes.apply { // Use the correct RecyclerView ID
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = notesAdapter
-            // Optional: Add ItemDecoration for spacing if needed
         }
     }
 
-    // Handle results from NoteEditActivity and NotePreviewActivity to refresh list if needed
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == NOTE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            // A note was potentially created, edited, or deleted.
-            // The ViewModel should ideally handle refreshing the list automatically
-            // if data source changes are observed correctly.
-            // For simplicity, we can just re-observe or trigger a refresh manually if needed.
-            // Toast.makeText(this, "List might need refresh", Toast.LENGTH_SHORT).show()
-        }
+    private fun showDeleteConfirmationDialog(note: Note) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.delete_confirmation_title)
+            .setMessage(R.string.delete_confirmation_message)
+            .setPositiveButton(R.string.action_delete) { _, _ ->
+                // Call ViewModel to delete the note
+                noteListViewModel.deleteNote(note)
+                // Optional: Show a confirmation Snackbar
+                Snackbar.make(binding.root, R.string.note_deleted_confirmation, Snackbar.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(R.string.action_cancel, null) // Just dismiss the dialog
+            .show()
     }
+
+    // Remove the deprecated onActivityResult as list updates are handled by the observer
 
     companion object {
-        private const val NOTE_ACTIVITY_REQUEST_CODE = 1 // Request code for starting note activities
+        // Keep the request code if needed for NoteEditActivity/NotePreviewActivity results,
+        // but it's not strictly necessary for list refresh anymore.
+        private const val NOTE_ACTIVITY_REQUEST_CODE = 1
     }
 }
