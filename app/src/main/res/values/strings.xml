@@ -3,6 +3,7 @@
     <string name="hero_subtitle">Capture, organize, and find your notes effortlessly.</string>
     <string name="add_new_note">Add New Note</string>    <!-- Content description for FAB -->
     <string name="section_title_notes">Your Notes</string>
+    <string name="section_title_notes_with_count">Your Notes (%d)</string> <!-- New formatted string -->
 
     <!-- Note Edit Screen -->
     <string name="title_new_note">New Note</string>

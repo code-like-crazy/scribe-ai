@@ -1,10 +1,15 @@
 package com.example.scribeai
 
+// Keep only necessary imports
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View // Add View import for listener
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -56,19 +61,34 @@ class MainActivity : AppCompatActivity() {
 
         // Observe notes from ViewModel
         observeNotes()
+
+        // Setup focus clearing for search
+        setupFocusClearing()
     }
 
     private fun setupSearchView() {
-        binding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                noteListViewModel.setSearchQuery(s.toString())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        binding.searchEditText.addTextChangedListener(
+                object : TextWatcher {
+                    override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                    ) {}
+                    override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                    ) {
+                        noteListViewModel.setSearchQuery(s.toString())
+                    }
+                    override fun afterTextChanged(s: Editable?) {}
+                }
+        )
     }
 
-     private fun observeNotes() {
+    private fun observeNotes() {
         // Use lifecycleScope and repeatOnLifecycle for safe collection from Flows
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -76,6 +96,10 @@ class MainActivity : AppCompatActivity() {
                     // Submit the updated list to the ListAdapter
                     notesAdapter.submitList(notesList)
                     Log.d("MainActivity", "Notes observed: ${notesList.size}")
+
+                    // Update section title with count
+                    binding.textViewSectionTitleNotes.text =
+                            getString(R.string.section_title_notes_with_count, notesList.size)
 
                     // Toggle empty state visibility using the new layout IDs
                     binding.recyclerViewNotes.isVisible = notesList.isNotEmpty()
@@ -89,15 +113,22 @@ class MainActivity : AppCompatActivity() {
     private fun launchNoteEditActivity() {
         val intent = Intent(this, NoteEditActivity::class.java)
         // No ID needed for new note
-        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE) // Use startActivityForResult to refresh list
+        startActivityForResult(
+                intent,
+                NOTE_ACTIVITY_REQUEST_CODE
+        ) // Use startActivityForResult to refresh list
     }
 
     // Helper function to launch NotePreviewActivity (for viewing existing notes)
     private fun launchNotePreviewActivity(noteId: Long) {
-        val intent = Intent(this, NotePreviewActivity::class.java).apply {
-            putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Reuse the same extra key
-        }
-        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE) // Use startActivityForResult to refresh list
+        val intent =
+                Intent(this, NotePreviewActivity::class.java).apply {
+                    putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Reuse the same extra key
+                }
+        startActivityForResult(
+                intent,
+                NOTE_ACTIVITY_REQUEST_CODE
+        ) // Use startActivityForResult to refresh list
     }
 
     private fun setupFab() {
@@ -108,14 +139,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         // Initialize adapter with both click listeners
-        notesAdapter = NotesAdapter(
-            onItemClicked = { note ->
-                launchNotePreviewActivity(note.id) // Launch preview screen for existing note
-            },
-            onDeleteClicked = { note ->
-                showDeleteConfirmationDialog(note) // Show confirmation before deleting
-            }
-        )
+        notesAdapter =
+                NotesAdapter(
+                        onItemClicked = { note ->
+                            launchNotePreviewActivity(
+                                    note.id
+                            ) // Launch preview screen for existing note
+                        },
+                        onDeleteClicked = { note ->
+                            showDeleteConfirmationDialog(note) // Show confirmation before deleting
+                        }
+                )
 
         binding.recyclerViewNotes.apply { // Use the correct RecyclerView ID
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -123,18 +157,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupFocusClearing() {
+        // Explicitly type the lambda parameters
+        binding.heroConstraintLayout.setOnTouchListener { v: View, event: MotionEvent ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (binding.searchEditText.isFocused) {
+                    binding.searchEditText.clearFocus()
+                    // Hide keyboard
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
+                }
+            }
+            // Return false so touch events are still processed by children if needed
+            false
+        }
+    }
+
     private fun showDeleteConfirmationDialog(note: Note) {
         AlertDialog.Builder(this)
-            .setTitle(R.string.delete_confirmation_title)
-            .setMessage(R.string.delete_confirmation_message)
-            .setPositiveButton(R.string.action_delete) { _, _ ->
-                // Call ViewModel to delete the note
-                noteListViewModel.deleteNote(note)
-                // Optional: Show a confirmation Snackbar
-                Snackbar.make(binding.root, R.string.note_deleted_confirmation, Snackbar.LENGTH_SHORT).show()
-            }
-            .setNegativeButton(R.string.action_cancel, null) // Just dismiss the dialog
-            .show()
+                .setTitle(R.string.delete_confirmation_title)
+                .setMessage(R.string.delete_confirmation_message)
+                .setPositiveButton(R.string.action_delete) { _, _ ->
+                    // Call ViewModel to delete the note
+                    noteListViewModel.deleteNote(note)
+                    // Optional: Show a confirmation Snackbar
+                    Snackbar.make(
+                                    binding.root,
+                                    R.string.note_deleted_confirmation,
+                                    Snackbar.LENGTH_SHORT
+                            )
+                            .show()
+                }
+                .setNegativeButton(R.string.action_cancel, null) // Just dismiss the dialog
+                .show()
     }
 
     // Remove the deprecated onActivityResult as list updates are handled by the observer

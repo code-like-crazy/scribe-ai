@@ -13,14 +13,14 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/Theme.ScribeAI.AppBarOverlay"
-        android:background="@color/background"
+        android:background="@color/secondary"
         android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/background"
+            android:background="@android:color/transparent"
             android:elevation="0dp"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             app:navigationIconTint="@color/foreground"
@@ -107,13 +107,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:hint="@string/note_title_hint"
                 app:boxStrokeColor="@color/border"
                 app:hintTextColor="@color/muted_foreground">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/title_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/note_title_hint"
                     android:inputType="textCapSentences"
                     android:textColor="@color/primary"
                     android:textSize="20sp" />
@@ -134,7 +134,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:hint="@string/note_content_hint"
                 app:boxStrokeColor="@color/border"
                 app:hintTextColor="@color/muted_foreground">
                 <com.google.android.material.textfield.TextInputEditText
@@ -142,6 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
+                    android:hint="@string/note_content_hint"
                     android:inputType="textMultiLine|textCapSentences"
                     android:minLines="5"
                     android:textColor="@color/primary" />

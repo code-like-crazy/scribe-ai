@@ -12,14 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/Theme.ScribeAI.AppBarOverlay">
+        android:theme="@style/Theme.ScribeAI.AppBarOverlay"
+        android:background="@color/secondary"
+        android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="0dp"
-            android:background="@color/background"
+            android:background="@android:color/transparent"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             app:navigationIconTint="@color/foreground"
             app:titleTextColor="@color/foreground"
@@ -51,7 +53,7 @@
                 android:text="Title"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/text_view_note_title"
@@ -60,8 +62,15 @@
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                 android:textStyle="bold"
                 android:textColor="@color/primary"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 tools:text="Note Title" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border"
+                android:layout_marginBottom="24dp" />
 
             <!-- Image Section (if present) -->
             <LinearLayout
@@ -78,7 +87,7 @@
                     android:text="Attached Image"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:textColor="@color/muted_foreground"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -87,7 +96,7 @@
                     app:cardElevation="0dp"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/border"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginBottom="16dp">
 
                     <ImageView
                         android:id="@+id/image_preview"
@@ -99,6 +108,15 @@
                         tools:src="@tools:sample/backgrounds/scenic" />
 
                 </com.google.android.material.card.MaterialCardView>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/border"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp" />
+
             </LinearLayout>
 
             <!-- Content Section -->
@@ -108,7 +126,7 @@
                 android:text="Content"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/text_view_note_content"
@@ -118,8 +136,15 @@
                 android:textSize="16sp"
                 android:lineSpacingMultiplier="1.2"
                 android:textColor="@color/primary"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 tools:text="This is the content of the note. It could be quite long, spanning multiple lines and paragraphs." />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border"
+                android:layout_marginBottom="24dp" />
 
             <!-- Tags Section -->
             <LinearLayout
@@ -137,7 +162,7 @@
                     android:text="Tags"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:textColor="@color/muted_foreground"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_tags"
@@ -156,6 +181,14 @@
                         tools:text="Another Tag" />
                 </com.google.android.material.chip.ChipGroup>
 
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/border"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="24dp" />
+
             </LinearLayout>
 
             <!-- Action Buttons -->
@@ -163,7 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="24dp"> <!-- Increased top margin -->
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_edit_note"

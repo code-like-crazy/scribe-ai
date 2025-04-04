@@ -3,6 +3,7 @@
     <!-- Base Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bg_card">#FDFDFD</color> <!-- Renamed from card_subtle_off_white -->
 
     <!-- shadcn-inspired Neutral Colors (Light) -->
     <color name="background">#FFFFFF</color>

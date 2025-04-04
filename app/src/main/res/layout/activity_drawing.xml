@@ -12,16 +12,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.ScribeAI.AppBarOverlay"
+        android:background="@color/secondary"
+        android:elevation="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_drawing"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
             app:title="Draw Note"
-            app:navigationIcon="@drawable/ic_arrow_back_24" /> <!-- Add back arrow -->
-        <!-- TODO: Add menu items for clear, color, stroke width -->
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:navigationIconTint="@color/foreground"
+            app:titleTextColor="@color/foreground" />
+
+        <!-- Divider View -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/border" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
