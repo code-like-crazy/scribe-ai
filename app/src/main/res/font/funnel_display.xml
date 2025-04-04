@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        app:fontStyle="normal"
+        app:fontWeight="400"
+        app:font="@font/font_funnel_display" />
+    <!-- You can add more entries for specific weights if needed, -->
+    <!-- but the variable font handles interpolation. -->
+    <!-- Example for bold: -->
+    <!--
+    <font
+        app:fontStyle="normal"
+        app:fontWeight="700"
+        app:font="@font/funnel_display" />
+    -->
+</font-family>

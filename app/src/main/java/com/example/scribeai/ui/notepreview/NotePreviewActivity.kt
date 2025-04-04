@@ -87,23 +87,24 @@ class NotePreviewActivity : AppCompatActivity() {
 
     private fun updateNoteDisplay(note: Note) {
         // Update title in toolbar
-        supportActionBar?.title =
-                note.title?.takeIf { it.isNotBlank() } ?: getString(R.string.note_preview_title)
+        supportActionBar?.title = getString(R.string.note_preview_title)
 
         // Set title and content
         binding.textViewNoteTitle.text = note.title
         binding.textViewNoteContent.text = note.content
 
         // Handle image if present
+        // Handle image if present
         note.imageUri?.let { uriString ->
-            binding.imagePreview.apply {
-                visibility = android.view.View.VISIBLE
-                com.bumptech.glide.Glide.with(this@NotePreviewActivity)
-                        .load(android.net.Uri.parse(uriString))
-                        .into(this)
-            }
+            binding.imageSection.visibility = View.VISIBLE // Use the LinearLayout ID
+            Glide.with(this)
+                    .load(Uri.parse(uriString))
+                    .fitCenter()
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .error(R.drawable.ic_broken_image)
+                    .into(binding.imagePreview) // Load into the ImageView
         }
-                ?: run { binding.imagePreview.visibility = android.view.View.GONE }
+                ?: run { binding.imageSection.visibility = View.GONE } // Hide the LinearLayout
     }
 
     private fun showDeleteConfirmationDialog() {

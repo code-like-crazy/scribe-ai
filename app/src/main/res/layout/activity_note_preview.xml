@@ -18,9 +18,18 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:elevation="0dp"
+            android:background="@color/background"
             app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:navigationIconTint="@color/foreground"
+            app:titleTextColor="@color/foreground"
             app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
+
+        <!-- Divider View -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/border" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -35,26 +44,71 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Title Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
+
             <TextView
                 android:id="@+id/text_view_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="24dp"
                 tools:text="Note Title" />
 
-            <ImageView
-                android:id="@+id/image_preview"
+            <!-- Image Section (if present) -->
+            <LinearLayout
+                android:id="@+id/image_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
+                android:orientation="vertical"
                 android:visibility="gone"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="@string/image_preview_desc"
-                tools:src="@tools:sample/backgrounds/scenic"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Attached Image"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/muted_foreground"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border"
+                    android:layout_marginBottom="24dp">
+
+                    <ImageView
+                        android:id="@+id/image_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="@string/image_preview_desc"
+                        tools:src="@tools:sample/backgrounds/scenic" />
+
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Content Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Content"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/text_view_note_content"
@@ -63,6 +117,8 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:textSize="16sp"
                 android:lineSpacingMultiplier="1.2"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="96dp"
                 tools:text="This is the content of the note. It could be quite long, spanning multiple lines and paragraphs." />
 
         </LinearLayout>
@@ -78,10 +134,12 @@
         app:cardElevation="8dp"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
 
+        <!-- Add horizontal margin to the CardView to contain the buttons -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_edit_note"
@@ -93,11 +151,20 @@
                 app:icon="@drawable/ic_draw_24"
                 app:iconGravity="textStart"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/scribe_blue_secondary"
+                android:backgroundTint="@color/primary"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/button_delete_note"
-                app:layout_constraintWidth_percent="0.5" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline_middle" />
+            <!-- Ensure tag is closed correctly -->
+
+            <!-- Add a guideline for splitting space -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_note"
@@ -109,11 +176,12 @@
                 app:icon="@drawable/ic_delete_24"
                 app:iconGravity="textStart"
                 android:layout_marginStart="8dp"
-                android:backgroundTint="@color/scribe_pink_accent"
+                android:backgroundTint="@color/destructive"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/button_edit_note"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.5" />
+                app:layout_constraintStart_toEndOf="@+id/guideline_middle"
+                app:layout_constraintEnd_toEndOf="parent" />
+            <!-- Ensure tag is closed correctly -->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

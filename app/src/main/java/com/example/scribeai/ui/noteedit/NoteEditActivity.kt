@@ -9,6 +9,7 @@ import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo // Import EditorInfo
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.example.scribeai.R
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.google.android.material.chip.Chip // Import Chip
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -67,6 +69,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
                 }
 
         observeNoteDetails() // Observe ViewModel for note data
+        setupTagInput() // Setup tag input listeners
         setupSaveButton() // Setup save button listener
     }
 
@@ -113,7 +116,55 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
                         uiManager.showTextMode()
                     }
         }
+
+        // Observe tags
+        viewModel.tags.observe(this) { tags -> updateTagChips(tags) }
     }
+
+    // --- Tag Management UI ---
+
+    private fun setupTagInput() {
+        binding.buttonAddTag.setOnClickListener { addTagFromInput() } // Use binding
+
+        binding.tagEditText.setOnEditorActionListener { _, actionId, _ -> // Use binding
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addTagFromInput()
+                true // Consume the event
+            } else {
+                false // Do not consume the event
+            }
+        }
+    }
+
+    private fun addTagFromInput() {
+        val tagText = binding.tagEditText.text.toString().trim() // Use binding
+        if (tagText.isNotEmpty()) {
+            viewModel.addTag(tagText)
+            binding.tagEditText.text?.clear() // Use binding
+        } else {
+            Toast.makeText(this, R.string.error_empty_tag, Toast.LENGTH_SHORT)
+                    .show() // Use string resource
+        }
+    }
+
+    private fun updateTagChips(tags: List<String>) {
+        binding.tagChipGroup.removeAllViews() // Use binding
+        tags.forEach { tag ->
+            val chip =
+                    Chip(this).apply { // Use binding
+                        text = tag
+                        isCloseIconVisible = true
+                        setOnCloseIconClickListener { viewModel.removeTag(tag) }
+                        // Optional: Apply chip styling from theme/style resource
+                        // setChipBackgroundColorResource(R.color.secondary)
+                        // setCloseIconTintResource(R.color.muted_foreground)
+                        // setTextColorResource(R.color.secondary_foreground)
+                    }
+            binding.tagChipGroup.addView(chip) // Use binding
+        }
+    }
+
+    // --- End Tag Management UI ---
 
     // --- NoteEditResultCallback Implementation ---
 

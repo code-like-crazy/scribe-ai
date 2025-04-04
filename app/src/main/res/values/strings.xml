@@ -10,6 +10,7 @@
     <string name="action_save">Save</string>
     <string name="error_empty_note">Note cannot be empty. Add a title or image/drawing.</string> <!--
     Updated error message -->
+    <string name="error_empty_tag">Tag cannot be empty</string> <!-- Added -->
     <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
     <string name="search_hint">Search notes...</string>    <!-- Added for MainActivity search -->
     <string name="action_discard">Discard</string> <!-- Added for Snackbar action -->

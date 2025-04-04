@@ -6,22 +6,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.noteedit.NoteEditActivity"> <!-- Added missing > -->
-    <!-- Add fitsSystemWindows="true" to handle status bar -->
+    tools:context=".ui.noteedit.NoteEditActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/Theme.ScribeAI.AppBarOverlay"> <!-- Added missing > -->
-        <!-- Add fitsSystemWindows="true" here too -->
+        android:theme="@style/Theme.ScribeAI.AppBarOverlay"
+        android:background="@color/background"
+        android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/background"
+            android:elevation="0dp"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:navigationIconTint="@color/foreground"
+            app:titleTextColor="@color/foreground"
             app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
+
+        <!-- Divider View -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/border" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -34,74 +45,176 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Mode Selection Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Input Mode"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
+
             <!-- Input Mode Selection -->
             <LinearLayout
                 android:id="@+id/input_mode_selector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/mode_toggle_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:singleSelection="true"
-                    app:selectionRequired="true">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_mode_type"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Text"
+                    android:textColor="@color/primary"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_text_format_24"
+                    app:iconTint="@color/primary"
+                    android:layout_marginEnd="8dp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_mode_type"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:text="Text"
-                        app:cornerRadius="8dp"
-                        app:icon="@drawable/ic_text_format_24"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_marginEnd="4dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_mode_camera"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:text="Image"
-                        app:cornerRadius="8dp"
-                        app:icon="@drawable/ic_camera_alt_24"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_marginStart="4dp" />
-
-                </com.google.android.material.button.MaterialButtonToggleGroup>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_mode_camera"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Image"
+                    android:textColor="@color/primary"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_camera_alt_24"
+                    app:iconTint="@color/primary" />
 
             </LinearLayout>
+
+            <!-- Title Field Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/title_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:hint="@string/note_title_hint">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:hint="@string/note_title_hint"
+                app:boxStrokeColor="@color/border"
+                app:hintTextColor="@color/muted_foreground">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/title_edit_text" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:inputType="textCapSentences"
-                    android:textSize="20sp" android:textStyle="bold" />
+                    android:id="@+id/title_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences"
+                    android:textColor="@color/primary"
+                    android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Content Field Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Content"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/content_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" android:hint="@string/note_content_hint">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:hint="@string/note_content_hint"
+                app:boxStrokeColor="@color/border"
+                app:hintTextColor="@color/muted_foreground">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/content_edit_text" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:gravity="top"
-                    android:inputType="textMultiLine|textCapSentences" android:minLines="5" />
+                    android:id="@+id/content_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="5"
+                    android:textColor="@color/primary" />
             </com.google.android.material.textfield.TextInputLayout>
-            <!-- Image Preview Container -->
-            <FrameLayout
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Tags Section Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tags"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="8dp" />
+
+            <!-- ChipGroup to display tags -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/tag_chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="4dp" />
+
+            <!-- Input for adding new tags -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tag_input_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Add a tag"
+                    app:boxStrokeColor="@color/border"
+                    app:hintTextColor="@color/muted_foreground"
+                    android:layout_marginEnd="8dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tag_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:textColor="@color/primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_add_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Add"
+                    android:textColor="@color/primary"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+
+
+            <!-- Image Preview -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/image_preview_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:visibility="gone"
-                android:layout_marginTop="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border">
 
                 <ImageView
                     android:id="@+id/image_preview"
@@ -112,23 +225,18 @@
                     android:contentDescription="@string/image_preview_desc"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-            </FrameLayout>
-            <!-- tools:visibility for layout preview -->
+            </com.google.android.material.card.MaterialCardView>
 
-
-            <!-- Save Button - Lively Green -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_save_note"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/action_save"
-                android:backgroundTint="@color/scribe_green_primary"
-                android:textColor="@android:color/white"
-                app:cornerRadius="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textSize="18sp" />
+                android:textSize="16sp"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/primary_foreground"
+                app:cornerRadius="8dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -56,59 +56,52 @@ class NoteEditUIManager(
                         viewModel.setSelectedImageUri(null)
                 }
 
-                // Update button styles
+                // Update button styles for text mode
                 binding.buttonModeType.apply {
-                        backgroundTintList =
-                                ColorStateList.valueOf(
-                                        context.getColor(
-                                                if (isTextMode) R.color.scribe_green_primary
-                                                else android.R.color.transparent
-                                        )
-                                )
-                        setTextColor(
+                        setBackgroundColor(
                                 context.getColor(
-                                        if (isTextMode) android.R.color.white
-                                        else R.color.scribe_green_primary
+                                        if (isTextMode) R.color.colorPrimary
+                                        else android.R.color.transparent
                                 )
                         )
-                        strokeWidth = if (isTextMode) 0 else 2
-                        strokeColor =
-                                ColorStateList.valueOf(
-                                        context.getColor(R.color.scribe_green_primary)
+                        strokeWidth = if (isTextMode) 0 else 1
+                        strokeColor = ColorStateList.valueOf(context.getColor(R.color.colorSurface))
+                        setTextColor(
+                                context.getColor(
+                                        if (isTextMode) R.color.colorOnPrimary
+                                        else R.color.colorOnSurface
                                 )
+                        )
                         iconTint =
                                 ColorStateList.valueOf(
                                         context.getColor(
-                                                if (isTextMode) android.R.color.white
-                                                else R.color.scribe_green_primary
+                                                if (isTextMode) R.color.colorOnPrimary
+                                                else R.color.colorOnSurface
                                         )
                                 )
                 }
 
+                // Update button styles for camera mode
                 binding.buttonModeCamera.apply {
-                        backgroundTintList =
-                                ColorStateList.valueOf(
-                                        context.getColor(
-                                                if (!isTextMode) R.color.scribe_green_primary
-                                                else android.R.color.transparent
-                                        )
-                                )
-                        setTextColor(
+                        setBackgroundColor(
                                 context.getColor(
-                                        if (!isTextMode) android.R.color.white
-                                        else R.color.scribe_green_primary
+                                        if (!isTextMode) R.color.colorPrimary
+                                        else android.R.color.transparent
                                 )
                         )
-                        strokeWidth = if (!isTextMode) 0 else 2
-                        strokeColor =
-                                ColorStateList.valueOf(
-                                        context.getColor(R.color.scribe_green_primary)
+                        strokeWidth = if (!isTextMode) 0 else 1
+                        strokeColor = ColorStateList.valueOf(context.getColor(R.color.colorSurface))
+                        setTextColor(
+                                context.getColor(
+                                        if (!isTextMode) R.color.colorOnPrimary
+                                        else R.color.colorOnSurface
                                 )
+                        )
                         iconTint =
                                 ColorStateList.valueOf(
                                         context.getColor(
-                                                if (!isTextMode) android.R.color.white
-                                                else R.color.scribe_green_primary
+                                                if (!isTextMode) R.color.colorOnPrimary
+                                                else R.color.colorOnSurface
                                         )
                                 )
                 }

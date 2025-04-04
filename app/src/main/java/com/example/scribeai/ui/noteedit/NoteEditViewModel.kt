@@ -26,6 +26,10 @@ class NoteEditViewModel(
     private val _selectedImageUri = MutableLiveData<Uri?>()
     val selectedImageUri: LiveData<Uri?> = _selectedImageUri
 
+    // LiveData for tags
+    private val _tags = MutableLiveData<List<String>>(emptyList())
+    val tags: LiveData<List<String>> = _tags
+
     init {
         if (noteId != null) {
             loadNote(noteId)
@@ -35,7 +39,12 @@ class NoteEditViewModel(
     private fun loadNote(id: Long) {
         viewModelScope.launch {
             // Collect the first value from the flow (or null if flow is empty)
-            _note.value = repository.getNoteById(id).firstOrNull()
+            val loadedNote = repository.getNoteById(id).firstOrNull()
+            _note.value = loadedNote
+            // Initialize tags from the loaded note
+            _tags.value = loadedNote?.tags ?: emptyList()
+            // Also set the initial image URI if the note has one
+            loadedNote?.imageUri?.let { _selectedImageUri.value = Uri.parse(it) }
         }
     }
 
@@ -43,6 +52,24 @@ class NoteEditViewModel(
     fun setSelectedImageUri(uri: Uri?) {
         _selectedImageUri.value = uri
     }
+
+    // --- Tag Management ---
+    fun addTag(tag: String) {
+        val currentTags = _tags.value?.toMutableList() ?: mutableListOf()
+        val trimmedTag = tag.trim()
+        if (trimmedTag.isNotBlank() && !currentTags.contains(trimmedTag)) {
+            currentTags.add(trimmedTag)
+            _tags.value = currentTags
+        }
+    }
+
+    fun removeTag(tag: String) {
+        val currentTags = _tags.value?.toMutableList() ?: mutableListOf()
+        if (currentTags.remove(tag)) {
+            _tags.value = currentTags
+        }
+    }
+    // --- End Tag Management ---
 
     fun saveNote(title: String, content: String) {
         viewModelScope.launch {
@@ -76,7 +103,7 @@ class NoteEditViewModel(
                                 title = trimmedTitle,
                                 content = trimmedContent,
                                 imageUri = imageUriToSave?.toString(),
-                                tags = emptyList(),
+                                tags = _tags.value ?: emptyList(), // Use current tags
                                 createdAt = timestamp,
                                 noteType = noteType
                         )
@@ -96,7 +123,9 @@ class NoteEditViewModel(
                                 title = trimmedTitle,
                                 content = trimmedContent,
                                 imageUri = imageUriToSave?.toString() ?: existingNote.imageUri,
-                                createdAt = timestamp,
+                                tags = _tags.value ?: existingNote.tags, // Use current tags
+                                createdAt = timestamp, // Keep original creation time? Maybe update
+                                // modified time? For now, updating.
                                 noteType = noteType
                         )
                 repository.update(updatedNote)

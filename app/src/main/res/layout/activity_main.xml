@@ -21,6 +21,12 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
+        <!-- Divider View -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/border" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/notesRecyclerView"

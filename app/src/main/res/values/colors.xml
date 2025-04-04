@@ -4,31 +4,67 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- ScribeAI Palette -->
-    <color name="scribe_green_primary">#58CC02</color>    <!-- Key Actions -->
-    <color name="scribe_blue_secondary">#1CB0F6</color>    <!-- Secondary Buttons -->
-    <color name="scribe_yellow_accent">#FFD700</color>    <!-- Accents -->
-    <color name="scribe_pink_accent">#FF9EAC</color>    <!-- Accents -->
-    <color name="scribe_white_background">#F9F9F9</color>    <!-- Light Background -->
-    <color name="scribe_charcoal_text">#2E2E2E</color>    <!-- Dark Text/Background -->
+    <!-- shadcn-inspired Neutral Colors (Light) -->
+    <color name="background">#FFFFFF</color>
+    <color name="foreground">#18181B</color> <!-- Updated from #020817 -->
+    <color name="card">#FFFFFF</color>
+    <color name="card_foreground">#18181B</color> <!-- Updated from #020817 -->
+    <color name="popover">#FFFFFF</color>
+    <color name="popover_foreground">#18181B</color> <!-- Updated from #020817 -->
+    <color name="primary">#18181B</color> <!-- Updated from #020817 -->
+    <color name="primary_foreground">#FAFAFA</color> <!-- Updated from #FFFFFF for slightly softer
+    white -->
+    <color name="secondary">#F4F4F5</color>
+    <color name="secondary_foreground">#18181B</color> <!-- Updated from #020817 -->
+    <color name="muted">#F4F4F5</color>
+    <color name="muted_foreground">#71717A</color>
+    <color name="accent">#F4F4F5</color>
+    <color name="accent_foreground">#18181B</color>
+    <color name="destructive">#EF4444</color>
+    <color name="destructive_foreground">#FAFAFA</color> <!-- Updated from #FFFFFF -->
+    <color name="border">#E4E4E7</color>
+    <color name="input">#E4E4E7</color>
+    <color name="ring">#18181B</color> <!-- Updated from #020817 -->
 
-    <!-- Semantic Colors (Light Theme) -->
-    <color name="colorPrimary">@color/scribe_green_primary</color>
-    <color name="colorPrimaryVariant">#4CAF50</color>    <!-- Darker Green -->
-    <color name="colorOnPrimary">@color/white</color>
+    <!-- shadcn-inspired Neutral Colors (Dark) -->
+    <!-- Using Zinc palette for dark mode as well -->
+    <color name="dark_background">#09090B</color> <!-- zinc-950 -->
+    <color name="dark_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_card">#18181B</color> <!-- zinc-900 -->
+    <color name="dark_card_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_popover">#18181B</color> <!-- zinc-900 -->
+    <color name="dark_popover_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_primary">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_primary_foreground">#18181B</color> <!-- zinc-900 -->
+    <color name="dark_secondary">#27272A</color> <!-- zinc-800 -->
+    <color name="dark_secondary_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_muted">#27272A</color> <!-- zinc-800 -->
+    <color name="dark_muted_foreground">#94A3B8</color>
+    <color name="dark_accent">#27272A</color> <!-- zinc-800 -->
+    <color name="dark_accent_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_destructive">#B91C1C</color> <!-- red-700 -->
+    <color name="dark_destructive_foreground">#FAFAFA</color> <!-- zinc-50 -->
+    <color name="dark_border">#27272A</color> <!-- zinc-800 -->
+    <color name="dark_input">#27272A</color> <!-- zinc-800 -->
+    <color name="dark_ring">#D4D4D8</color> <!-- zinc-300 -->
 
-    <color name="colorSecondary">@color/scribe_blue_secondary</color>
-    <color name="colorSecondaryVariant">#03A9F4</color>    <!-- Slightly different Blue -->
-    <color name="colorOnSecondary">@color/white</color>
+    <!-- Semantic Colors (Light Theme - Default) -->
+    <color name="colorPrimary">@color/primary</color>
+    <color name="colorPrimaryVariant">#18181B</color>
+    <color name="colorOnPrimary">@color/primary_foreground</color>
 
-    <color name="colorAccent">@color/scribe_yellow_accent</color>
+    <color name="colorSecondary">@color/secondary</color>
+    <color name="colorSecondaryVariant">#E4E4E7</color>
+    <color name="colorOnSecondary">@color/secondary_foreground</color>
 
-    <color name="colorBackground">@color/scribe_white_background</color>
-    <color name="colorOnBackground">@color/scribe_charcoal_text</color>
+    <color name="colorAccent">@color/accent</color>
 
-    <color name="colorSurface">@color/white</color>    <!-- Card backgrounds etc. -->
-    <color name="colorOnSurface">@color/scribe_charcoal_text</color>
+    <color name="colorBackground">@color/background</color>
+    <color name="colorOnBackground">@color/foreground</color>
 
-    <color name="colorError">#B00020</color>
-    <color name="colorOnError">@color/white</color>
+    <color name="colorSurface">@color/card</color>
+    <color name="colorOnSurface">@color/card_foreground</color>
+
+    <color name="colorError">@color/destructive</color>
+    <color name="colorOnError">@color/destructive_foreground</color>
 </resources>
