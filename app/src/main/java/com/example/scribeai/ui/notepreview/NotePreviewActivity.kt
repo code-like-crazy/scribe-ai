@@ -1,5 +1,6 @@
 package com.example.scribeai.ui.notepreview
 
+// Markwon imports
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -18,15 +19,18 @@ import com.example.scribeai.databinding.ActivityNotePreviewBinding
 import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.noteedit.NoteEditViewModel
 import com.example.scribeai.ui.noteedit.NoteEditViewModelFactory
-import com.google.android.material.chip.Chip // Import Chip
+import com.google.android.material.chip.Chip
+import io.noties.markwon.Markwon
+import io.noties.markwon.linkify.LinkifyPlugin
 
 class NotePreviewActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityNotePreviewBinding // ViewBinding instance
+    private lateinit var binding: ActivityNotePreviewBinding
     private var currentNote: Note? = null
-    private var noteId: Long = -1L // Use Long for ID, initialize to -1
+    private var noteId: Long = -1L
+    private lateinit var markwon: Markwon // Add Markwon instance
 
-    // Use the same ViewModel as NoteEdit for consistency in data handling
+    // Use the same ViewModel
     private val noteEditViewModel: NoteEditViewModel by viewModels {
         // Instantiate repository here
         val repository = NoteRepository(AppDatabase.getDatabase(application).noteDao())
@@ -38,6 +42,12 @@ class NotePreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNotePreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize Markwon
+        markwon =
+                Markwon.builder(this)
+                        .usePlugin(LinkifyPlugin.create()) // Enable link detection
+                        .build()
 
         setupToolbar()
         noteId = intent.getLongExtra(NoteEditActivity.EXTRA_NOTE_ID, -1L)
@@ -90,11 +100,12 @@ class NotePreviewActivity : AppCompatActivity() {
         // Update title in toolbar
         supportActionBar?.title = getString(R.string.note_preview_title)
 
-        // Set title and content
+        // Set title
         binding.textViewNoteTitle.text = note.title
-        binding.textViewNoteContent.text = note.content
+        // Render content using Markwon
+        markwon.setMarkdown(binding.textViewNoteContent, note.content ?: "")
 
-        // Handle image if present
+        // Handle image
         // Handle image if present
         note.imageUri?.let { uriString ->
             binding.imageSection.visibility = View.VISIBLE // Use the LinearLayout ID

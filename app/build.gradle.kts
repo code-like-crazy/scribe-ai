@@ -23,7 +23,8 @@ fun getApiKeyProperty(key: String): String {
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")  
+    alias(libs.plugins.kotlin.serialization) // Apply serialization plugin
+    id("kotlin-kapt")
 }
 
 android {
@@ -110,4 +111,11 @@ dependencies {
 
     // Gemini AI
     implementation(libs.google.ai.generativeai)
+
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Markwon (Markdown)
+    implementation(libs.markwon.core)
+    implementation(libs.markwon.linkify) // Optional
 }

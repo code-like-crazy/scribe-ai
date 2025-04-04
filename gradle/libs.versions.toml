@@ -17,7 +17,9 @@ mlkitTextRecognition = "19.0.0"
 glide = "4.16.0"
 recyclerview = "1.3.2"
 lifecycle = "2.6.2"
-gemini = "0.7.0"                # Added Gemini version
+gemini = "0.7.0"
+kotlinxSerialization = "1.6.3"
+markwon = "4.6.2"               # Added Markwon version
 
 [libraries]
 # Existing libraries
@@ -59,10 +61,18 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 
 # Gemini AI
-google-ai-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" } # Added Gemini library
+google-ai-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" }
+
+# Kotlinx Serialization
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Markwon (Markdown Renderer)
+markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
+markwon-linkify = { group = "io.noties.markwon", name = "linkify", version.ref = "markwon" } # Optional: Auto-link URLs
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }       # Added for Room
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # Added Kotlin Serialization plugin
