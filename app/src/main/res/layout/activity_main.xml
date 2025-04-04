@@ -79,6 +79,7 @@
                 android:alpha="0.9"
                 android:padding="4dp"
                 android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/searchCardView"
                 app:layout_constraintStart_toStartOf="parent"
                 android:drawableStart="@drawable/ic_filter_24"

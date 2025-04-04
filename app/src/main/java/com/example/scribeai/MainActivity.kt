@@ -222,25 +222,62 @@ class MainActivity : AppCompatActivity() {
                         .setView(dialogView) // Use the correct overload
                         .create()
 
-        // Populate tags within a coroutine scope
-        lifecycleScope.launch {
-            // Ensure Flow collection happens on the main thread if UI updates are needed
-            // immediately
-            // but fetching tags should be fine here.
-            val allTags = noteListViewModel.getAllTags().first() // Collect the first emission
-            chipGroup.removeAllViews() // Clear existing chips before adding new ones
-            allTags.forEach { tag: String -> // Explicitly type the loop variable
-                val chip =
-                        Chip(this@MainActivity).apply {
-                            text = tag
-                            isCheckable = true
-                            isChecked = selectedFilterTags.contains(tag)
-                            // Add styling as needed (e.g., background, text color)
-                            // setChipBackgroundColorResource(R.color.chip_background_selector)
-                            // setTextColorResource(R.color.chip_text_selector)
-                        }
-                chipGroup.addView(chip)
-            }
+        // Define predefined tags and colors (simplified example)
+        val predefinedTags =
+                listOf(
+                        "CS 101",
+                        "MATH 203",
+                        "PHYS 110",
+                        "CHEM 305",
+                        "ECON 101",
+                        "Lecture Notes",
+                        "Study Guide",
+                        "Lab Report",
+                        "Assignment",
+                        "Project Ideas",
+                        "Exam Prep",
+                        "Reading Summary"
+                )
+        // Basic color cycling for demonstration
+        val tagColors =
+                listOf(
+                        Pair(0xFFE1F5FE.toInt(), 0xFF01579B.toInt()), // Light Blue / Dark Blue
+                        Pair(0xFFE8F5E9.toInt(), 0xFF1B5E20.toInt()), // Light Green / Dark Green
+                        Pair(0xFFFFFDE7.toInt(), 0xFFF57F17.toInt()), // Light Yellow / Dark Yellow
+                        Pair(0xFFFCE4EC.toInt(), 0xFF880E4F.toInt()), // Light Pink / Dark Pink
+                        Pair(0xFFF3E5F5.toInt(), 0xFF4A148C.toInt()), // Light Purple / Dark Purple
+                        Pair(0xFFE0F2F1.toInt(), 0xFF004D40.toInt()), // Light Teal / Dark Teal
+                        Pair(0xFFFFF8E1.toInt(), 0xFFFF6F00.toInt()), // Light Orange / Dark Orange
+                        Pair(0xFFEDE7F6.toInt(), 0xFF311B92.toInt()), // Light Indigo / Dark Indigo
+                        Pair(
+                                0xFFFBE9E7.toInt(),
+                                0xFFBF360C.toInt()
+                        ), // Light Deep Orange / Dark Deep Orange
+                        Pair(0xFFE3F2FD.toInt(), 0xFF0D47A1.toInt()), // Lighter Blue / Darker Blue
+                        Pair(0xFFFFEBEE.toInt(), 0xFFB71C1C.toInt()), // Light Red / Dark Red
+                        Pair(
+                                0xFFE8EAF6.toInt(),
+                                0xFF1A237E.toInt()
+                        ) // Lighter Indigo / Darker Indigo
+                )
+
+        chipGroup.removeAllViews() // Clear existing chips
+        predefinedTags.forEachIndexed { index, tag ->
+            val chip =
+                    Chip(this@MainActivity).apply {
+                        text = tag
+                        isCheckable = true
+                        isChecked = selectedFilterTags.contains(tag)
+
+                        // Apply colors
+                        val colors = tagColors[index % tagColors.size]
+                        chipBackgroundColor =
+                                android.content.res.ColorStateList.valueOf(colors.first)
+                        setTextColor(colors.second)
+                        // Optional: Add ripple effect, corner radius etc. via style or
+                        // programmatically
+                    }
+            chipGroup.addView(chip)
         }
 
         buttonClear.setOnClickListener {
