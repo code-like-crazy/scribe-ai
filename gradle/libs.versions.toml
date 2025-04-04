@@ -17,6 +17,7 @@ mlkitTextRecognition = "19.0.0"
 glide = "4.16.0"
 recyclerview = "1.3.2"
 lifecycle = "2.6.2"
+gemini = "0.7.0"                # Added Gemini version
 
 [libraries]
 # Existing libraries
@@ -56,6 +57,9 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 # Lifecycle
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+
+# Gemini AI
+google-ai-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" } # Added Gemini library
 
 
 [plugins]

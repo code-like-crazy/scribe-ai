@@ -232,6 +232,15 @@
                     android:contentDescription="@string/image_preview_desc"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+                <!-- Progress Bar for OCR/Gemini processing -->
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton

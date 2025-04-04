@@ -7,8 +7,12 @@ package com.example.scribeai.ui.noteedit
 // Local UI components
 import android.app.Activity // Re-added import
 import android.content.Context // Import Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent // Import MotionEvent
 import android.view.View // Import View
@@ -18,18 +22,24 @@ import android.widget.EditText // Import EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.scribeai.BuildConfig // Import BuildConfig
 import com.example.scribeai.R
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
+import com.google.ai.client.generativeai.type.generationConfig
 import com.google.android.material.chip.Chip // Import Chip
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.IOException
+import kotlinx.coroutines.launch
 
 // Implement the callback interface for the result handler
 class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
+
+    // Gemini AI Model
+    private lateinit var generativeModel: GenerativeModel
 
     private lateinit var binding: ActivityNoteEditBinding
 
@@ -63,6 +73,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
         setContentView(binding.root)
 
         setupToolbar() // Setup toolbar first
+        initializeGeminiModel() // Initialize Gemini
         initializeManagers() // Initialize helper classes
 
         // Set title based on whether it's a new note or editing
@@ -82,6 +93,36 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun initializeGeminiModel() {
+        // Retrieve the API key from BuildConfig
+        val apiKey = BuildConfig.GEMINI_API_KEY
+        if (apiKey.isEmpty()) {
+            Log.e(TAG, "Gemini API Key is missing. Check local.properties and build configuration.")
+            // Handle the missing key appropriately - maybe disable AI features or show an error
+            Toast.makeText(this, "Error: Gemini API Key is missing.", Toast.LENGTH_LONG).show()
+            // Depending on the desired behavior, you might want to return or throw an exception
+            // For now, we'll proceed, but the GenerativeModel initialization will likely fail
+        }
+
+        // Configure the model - stop sequences prevent unwanted text like "Response:"
+        val config = generationConfig {
+            // Adjust temperature for creativity vs. factuality (lower is more factual)
+            temperature = 0.2f
+            // Limit output tokens if necessary
+            // maxOutputTokens = 1024
+            // Stop sequences to ensure only note content is returned
+            stopSequences = listOf("---", "Note:", "Summary:", "Response:")
+        }
+
+        generativeModel =
+                GenerativeModel(
+                        // Use the specified model name
+                        modelName = "gemini-2.0-flash",
+                        apiKey = apiKey,
+                        generationConfig = config
+                )
     }
 
     private fun initializeManagers() {
@@ -208,38 +249,70 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
         showErrorToast(message)
     }
 
-    // --- OCR Processing (Remains in Activity for now) ---
+    // --- Gemini Vision Processing ---
 
     private fun processImageForOcr(imageUri: Uri) {
-        Log.d(TAG, "Starting OCR process for URI: $imageUri")
-        // (Implementation remains the same)
-        try {
-            val inputImage = InputImage.fromFilePath(this, imageUri)
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        Log.d(TAG, "Starting Gemini Vision process for URI: $imageUri")
+        binding.progressBar.visibility = View.VISIBLE // Show progress bar
 
-            recognizer
-                    .process(inputImage)
-                    .addOnSuccessListener { visionText ->
-                        Log.d(
-                                TAG,
-                                "OCR Success. Detected text blocks: ${visionText.textBlocks.size}"
-                        )
-                        val currentContent = binding.contentEditText.text.toString()
-                        val separator =
-                                if (currentContent.isNotBlank()) "\n\n--- OCR Text ---\n" else ""
-                        binding.contentEditText.append("$separator${visionText.text}")
-                        Toast.makeText(this, "Text recognized!", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "OCR Failed", e)
-                        showErrorToast("Text recognition failed: ${e.message}")
-                    }
+        lifecycleScope.launch {
+            try {
+                val bitmap = uriToBitmap(imageUri)
+                if (bitmap == null) {
+                    showErrorToast("Failed to load image.")
+                    binding.progressBar.visibility = View.GONE
+                    return@launch
+                }
+
+                // Strict prompt to extract only the text and format it as notes
+                val prompt =
+                        """
+                Extract the exact text content from the image provided.
+                Format the extracted text clearly as notes.
+                Do NOT add any introductory phrases, explanations, summaries, or any text other than the extracted note content itself.
+                Ensure the output is only the formatted notes based on the image text.
+                """.trimIndent()
+
+                val inputContent = content {
+                    image(bitmap)
+                    text(prompt)
+                }
+
+                val response = generativeModel.generateContent(inputContent)
+
+                response.text?.let { generatedText ->
+                    Log.d(TAG, "Gemini Success. Generated text length: ${generatedText.length}")
+                    val currentContent = binding.contentEditText.text.toString()
+                    // Append directly, assuming Gemini formats it well based on the prompt
+                    val separator = if (currentContent.isNotBlank()) "\n\n" else ""
+                    binding.contentEditText.append("$separator$generatedText")
+                    Toast.makeText(this@NoteEditActivity, "Text extracted!", Toast.LENGTH_SHORT)
+                            .show()
+                }
+                        ?: run {
+                            Log.w(TAG, "Gemini response text was null.")
+                            showErrorToast("AI could not extract text from the image.")
+                        }
+            } catch (e: Exception) {
+                Log.e(TAG, "Gemini Vision Failed", e)
+                showErrorToast("AI text extraction failed: ${e.message}")
+            } finally {
+                binding.progressBar.visibility = View.GONE // Hide progress bar
+            }
+        }
+    }
+
+    // Helper function to convert Uri to Bitmap
+    private fun uriToBitmap(uri: Uri): Bitmap? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+            } else {
+                @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            }
         } catch (e: IOException) {
-            Log.e(TAG, "Error preparing image for OCR (IO)", e)
-            showErrorToast("Error reading image file for OCR")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error preparing image for OCR (General)", e)
-            showErrorToast("Error processing image: ${e.message}")
+            Log.e(TAG, "Error converting Uri to Bitmap", e)
+            null
         }
     }
 
