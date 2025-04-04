@@ -1,9 +1,8 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 // Removed unused import: import androidx.core.app.ActivityCompat.startActivityForResult
 // Import the ViewModel
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.view.View
@@ -13,7 +12,7 @@ import com.example.scribeai.databinding.ActivityNoteEditBinding
 
 // Interface to decouple UIManager from specific ActivityResultHandler implementation
 interface NoteEditLauncher {
-        fun launchDrawing(intent: Intent)
+        // fun launchDrawing(intent: Intent) // Drawing feature removed
         // Simplified launcher interface for now
         fun launchCamera()
         fun launchGallery()

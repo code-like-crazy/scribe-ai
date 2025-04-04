@@ -1,8 +1,6 @@
-package com.example.scribeai.data
+package com.example.scribeai.core.data
 
 import androidx.room.TypeConverter
-// No explicit import for NoteType needed if in the same package, but added for clarity if issues persist
-// import com.example.scribeai.data.NoteType 
 
 class Converters {
     // Converter for List<String> (for tags)

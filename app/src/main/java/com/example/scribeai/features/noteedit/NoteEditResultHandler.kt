@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 import android.app.Activity
 import android.content.Context
@@ -21,7 +21,6 @@ import java.util.Locale
 // Callback interface for the Activity
 interface NoteEditResultCallback {
     fun onImageResult(uri: Uri)
-    fun onDrawingResult(uri: Uri) // Kept for backward compatibility
     fun onResultCancelledOrFailed(isNewDrawingAttempt: Boolean)
     fun showTextModeUI()
     fun showError(message: String)
@@ -128,11 +127,7 @@ class NoteEditResultHandler(
         pickImageLauncher.launch(intent)
     }
 
-    // Drawing feature removed - empty implementation
-    override fun launchDrawing(intent: Intent) {
-        // No-op as drawing feature is removed
-        callback.onResultCancelledOrFailed(isNewDrawingAttempt = true)
-    }
+    // launchDrawing removed
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
@@ -165,7 +160,6 @@ class NoteEditResultHandler(
         }
     }
 
-    // Methods kept for backward compatibility but do nothing
-    fun setCurrentDrawingUri(uri: Uri?) {}
-    fun getCurrentDrawingUri(): Uri? = null
+    // fun setCurrentDrawingUri(uri: Uri?) {} // Drawing feature removed
+    // fun getCurrentDrawingUri(): Uri? = null // Drawing feature removed
 }

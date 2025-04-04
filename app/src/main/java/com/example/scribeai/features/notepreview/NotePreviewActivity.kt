@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.notepreview
+package com.example.scribeai.features.notepreview
 
 // Markwon imports
 // import io.noties.markwon.core.CorePlugin // Removed temporarily
@@ -14,13 +14,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.scribeai.R
-import com.example.scribeai.data.AppDatabase
-import com.example.scribeai.data.Note
-import com.example.scribeai.data.NoteRepository
+import com.example.scribeai.core.data.AppDatabase // Explicit import
+import com.example.scribeai.core.data.Note // Explicit import
+import com.example.scribeai.core.data.NoteRepository // Explicit import
 import com.example.scribeai.databinding.ActivityNotePreviewBinding
-import com.example.scribeai.ui.noteedit.NoteEditActivity
-import com.example.scribeai.ui.noteedit.NoteEditViewModel
-import com.example.scribeai.ui.noteedit.NoteEditViewModelFactory
+import com.example.scribeai.features.noteedit.NoteEditActivity // Explicit import
+import com.example.scribeai.features.noteedit.NoteEditViewModel // Explicit import
+import com.example.scribeai.features.noteedit.NoteEditViewModelFactory // Explicit import
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import io.noties.markwon.Markwon

@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 // Removed jsonObject import as it's not used for schema definition here
 import android.content.Context

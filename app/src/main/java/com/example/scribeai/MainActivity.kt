@@ -19,13 +19,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.scribeai.data.AppDatabase
-import com.example.scribeai.data.Note
-import com.example.scribeai.data.NoteRepository
+import com.example.scribeai.core.data.AppDatabase // Explicit import
+import com.example.scribeai.core.data.Note // Explicit import
+import com.example.scribeai.core.data.NoteRepository // Explicit import
 import com.example.scribeai.databinding.ActivityMainBinding
-import com.example.scribeai.ui.noteedit.NoteEditActivity
-import com.example.scribeai.ui.notelist.* // Import the new callback
-import com.example.scribeai.ui.notepreview.NotePreviewActivity
+import com.example.scribeai.features.noteedit.NoteEditActivity // Explicit import
+import com.example.scribeai.features.notelist.FilterNotesDialogFragment // Explicit import
+import com.example.scribeai.features.notelist.NoteListViewModel // Explicit import
+import com.example.scribeai.features.notelist.NoteListViewModelFactory // Explicit import
+import com.example.scribeai.features.notelist.NotesAdapter // Explicit import
+import com.example.scribeai.features.notelist.SwipeToDeleteCallback // Explicit import
+import com.example.scribeai.features.notepreview.NotePreviewActivity // Explicit import
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.first // Import needed for listener impl
 import kotlinx.coroutines.launch
@@ -43,7 +47,6 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
 
     // Adapter instance
     private lateinit var notesAdapter: NotesAdapter
-    // Removed selectedFilterTags, now managed by ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +57,7 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
         // Setup RecyclerView Adapter (needs ViewModel)
         setupRecyclerView()
 
-        // Setup FAB click listener
+        // Setup Floating Action Button (FAB) click listener
         setupFab()
 
         // Setup Search View
@@ -120,23 +123,16 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
     // Helper function to launch NoteEditActivity (for creating new notes)
     private fun launchNoteEditActivity() {
         val intent = Intent(this, NoteEditActivity::class.java)
-        // No ID needed for new note
-        startActivityForResult(
-                intent,
-                NOTE_ACTIVITY_REQUEST_CODE
-        ) // Use startActivityForResult to refresh list
+        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE)
     }
 
     // Helper function to launch NotePreviewActivity (for viewing existing notes)
     private fun launchNotePreviewActivity(noteId: Long) {
         val intent =
                 Intent(this, NotePreviewActivity::class.java).apply {
-                    putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Reuse the same extra key
+                    putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId)
                 }
-        startActivityForResult(
-                intent,
-                NOTE_ACTIVITY_REQUEST_CODE
-        ) // Use startActivityForResult to refresh list
+        startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE)
     }
 
     private fun setupFab() {
@@ -149,14 +145,8 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
         // Initialize adapter with click listener
         notesAdapter =
                 NotesAdapter(
-                        onItemClicked = { note ->
-                            launchNotePreviewActivity(
-                                    note.id
-                            ) // Launch preview screen for existing note
-                        },
-                        onDeleteClicked = { note ->
-                            showDeleteConfirmationDialog(note) // Show confirmation before deleting
-                        }
+                        onItemClicked = { note -> launchNotePreviewActivity(note.id) },
+                        onDeleteClicked = { note -> showDeleteConfirmationDialog(note) }
                 )
 
         binding.recyclerViewNotes.apply {
@@ -207,7 +197,7 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
                 .setPositiveButton(R.string.action_delete) { _, _ ->
                     // Call ViewModel to delete the note
                     noteListViewModel.deleteNote(note)
-                    // Optional: Show a confirmation Snackbar
+
                     Snackbar.make(
                                     binding.root,
                                     R.string.note_deleted_confirmation,
@@ -215,7 +205,7 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
                             )
                             .show()
                 }
-                .setNegativeButton(R.string.action_cancel, null) // Just dismiss the dialog
+                .setNegativeButton(R.string.action_cancel, null)
                 .show()
     }
 

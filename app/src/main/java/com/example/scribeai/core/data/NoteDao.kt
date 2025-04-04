@@ -1,4 +1,4 @@
-package com.example.scribeai.data
+package com.example.scribeai.core.data
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 // Base imports
 // Local project imports
@@ -9,6 +9,7 @@ package com.example.scribeai.ui.noteedit
 // Removed Gemini imports, now handled by NoteEditGeminiProcessor
 // Removed Chip import, now handled by NoteEditTagManager
 // Removed IOException and kotlinx.coroutines.launch, now handled elsewhere
+// Import classes from the same package
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
@@ -18,8 +19,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.scribeai.R
-import com.example.scribeai.data.AppDatabase
-import com.example.scribeai.data.NoteRepository
+import com.example.scribeai.core.data.AppDatabase
+import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
 import java.io.File // Needed for file operations
 import java.io.FileOutputStream // Needed for file operations
@@ -81,7 +82,10 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         tagManager.setupTagInput()
         setupSaveButton()
         // Keyboard setup delegated
-        NoteEditKeyboardUtil.setupKeyboardDismissalOnTouch(binding.nestedScrollView, this)
+        com.example.scribeai.features.noteedit.NoteEditKeyboardUtil.setupKeyboardDismissalOnTouch(
+                binding.nestedScrollView,
+                this
+        ) // Use fully qualified name
     }
 
     private fun setupToolbar() {
@@ -97,7 +101,9 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         lifecycle.addObserver(resultHandler)
         previewManager = NoteEditPreviewManager(this, binding)
         uiManager = NoteEditUIManager(this, binding, viewModel, resultHandler)
-        uiManager.setupInputModeButtons { resultHandler.getCurrentDrawingUri() }
+        // uiManager.setupInputModeButtons { resultHandler.getCurrentDrawingUri() } // Removed
+        // drawing URI provider
+        uiManager.setupInputModeButtons { null } // Pass null as drawing URI provider
 
         // Initialize new managers
         tagManager =
@@ -130,7 +136,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
                         ?: run {
                             // No image URI, default to text mode
                             previewManager.hideAllPreviews()
-                            resultHandler.setCurrentDrawingUri(null)
+                            // resultHandler.setCurrentDrawingUri(null) // Removed drawing URI call
                             uiManager.showTextMode()
                         }
             }
@@ -190,9 +196,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         }
     }
 
-    override fun onDrawingResult(uri: Uri) {
-        // Drawing feature removed
-    }
+    // onDrawingResult removed
 
     override fun onResultCancelledOrFailed(isNewDrawingAttempt: Boolean) {
         // If cancelling a NEW drawing/image selection and no image exists, revert to text mode.
@@ -256,17 +260,16 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         // super.onBackPressed() // Call super if you want default back behavior + finishing
     }
 
-    private fun saveNoteAndFinish() {
-        val title = binding.titleEditText.text.toString().trim()
-        val content = binding.contentEditText.text.toString().trim()
-        // val imageUri = viewModel.selectedImageUri.value // Don't need to read here
-
-        // --- Validation ---
+    /**
+     * Validates the note input fields (title, content/image). Shows errors directly on the UI
+     * elements if validation fails.
+     * @return true if input is valid, false otherwise.
+     */
+    private fun validateNoteInput(title: String, content: String): Boolean {
         // 1. Check if title is empty
         if (title.isEmpty()) {
-            binding.titleInputLayout.error =
-                    getString(R.string.error_empty_title) // Show error on the field, removed toast
-            return // Stop saving
+            binding.titleInputLayout.error = getString(R.string.error_empty_title)
+            return false // Stop validation
         } else {
             binding.titleInputLayout.error = null // Clear error if title is not empty
         }
@@ -275,8 +278,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         if (content.isEmpty() && viewModel.selectedImageUri.value == null) {
             com.google.android.material.snackbar.Snackbar.make(
                             binding.root,
-                            R.string.error_empty_note_content_or_image, // Use a more specific
-                            // string if available
+                            R.string.error_empty_note_content_or_image,
                             com.google.android.material.snackbar.Snackbar.LENGTH_LONG
                     )
                     .setAction(R.string.action_discard) {
@@ -284,11 +286,21 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
                         finish()
                     }
                     .show()
-            return
+            return false // Validation failed
         }
 
-        // Update the ViewModel's selected image URI before saving - REMOVED REDUNDANT CALL
-        // viewModel.setSelectedImageUri(imageUri)
+        return true // All checks passed
+    }
+
+    private fun saveNoteAndFinish() {
+        val title = binding.titleEditText.text.toString().trim()
+        val content = binding.contentEditText.text.toString().trim()
+
+        // Validate input first
+        if (!validateNoteInput(title, content)) {
+            return // Stop saving if validation fails
+        }
+
         // Save the note - ViewModel already has the correct internal URI
         viewModel.saveNote(title, content)
         Log.d(

@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.notelist
+package com.example.scribeai.features.notelist
 
 // Removed: import androidx.fragment.app.activityViewModels
 import android.app.Dialog

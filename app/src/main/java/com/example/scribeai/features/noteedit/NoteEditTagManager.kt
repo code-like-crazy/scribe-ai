@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 import android.content.Context
 import android.view.inputmethod.EditorInfo
@@ -8,8 +8,6 @@ import android.widget.Toast
 import com.example.scribeai.R
 import com.google.android.material.chip.Chip // Added import
 import com.google.android.material.chip.ChipGroup // Added import
-
-// NoteEditViewModel is in the same package
 
 class NoteEditTagManager(
         private val context: Context,

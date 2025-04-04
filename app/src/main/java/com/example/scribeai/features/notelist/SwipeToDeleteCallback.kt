@@ -1,8 +1,8 @@
-package com.example.scribeai.ui.notelist
+package com.example.scribeai.features.notelist
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.scribeai.data.Note
+import com.example.scribeai.core.data.Note // Import Note
 
 /**
  * A reusable ItemTouchHelper Callback for implementing swipe-to-delete functionality.

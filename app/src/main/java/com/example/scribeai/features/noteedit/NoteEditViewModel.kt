@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.noteedit
+package com.example.scribeai.features.noteedit
 
 import android.net.Uri // Import Uri
 import androidx.lifecycle.LiveData
@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.scribeai.data.Note
-import com.example.scribeai.data.NoteRepository
-import com.example.scribeai.data.NoteType
+import com.example.scribeai.core.data.Note // Explicitly import Note
+import com.example.scribeai.core.data.NoteRepository // Explicitly import NoteRepository
+import com.example.scribeai.core.data.NoteType // Explicitly import NoteType
 import java.util.*
 import kotlinx.coroutines.flow.firstOrNull // Import firstOrNull
 import kotlinx.coroutines.launch

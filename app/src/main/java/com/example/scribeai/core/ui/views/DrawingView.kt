@@ -1,9 +1,9 @@
-package com.example.scribeai.ui.views
+package com.example.scribeai.core.ui.views
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
@@ -11,21 +11,23 @@ import android.view.MotionEvent
 import android.view.View
 import kotlin.collections.ArrayList
 
-class DrawingView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class DrawingView
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+        View(context, attrs, defStyleAttr) {
 
     private var backgroundBitmap: Bitmap? = null // To hold the initial drawing
     private var currentPath = Path()
     private val paths = ArrayList<Pair<Path, Paint>>() // Store paths and their paints
-    private val paint = Paint().apply {
-        color = Color.BLACK
-        isAntiAlias = true
-        strokeWidth = 8f // Default stroke width
-        style = Paint.Style.STROKE
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
+    private val paint =
+            Paint().apply {
+                color = Color.BLACK
+                isAntiAlias = true
+                strokeWidth = 8f // Default stroke width
+                style = Paint.Style.STROKE
+                strokeJoin = Paint.Join.ROUND
+                strokeCap = Paint.Cap.ROUND
+            }
 
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
@@ -35,9 +37,7 @@ class DrawingView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // Draw the background bitmap first if it exists
-        backgroundBitmap?.let {
-            canvas.drawBitmap(it, 0f, 0f, null)
-        }
+        backgroundBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
         // Draw all completed paths on top
         for ((path, paint) in paths) {
             canvas.drawPath(path, paint)

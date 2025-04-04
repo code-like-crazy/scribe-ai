@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.noteedit.NoteEditActivity" android:exported="false"
+        <activity android:name=".features.noteedit.NoteEditActivity" android:exported="false"
             android:label="@string/title_new_note" android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.ScribeAI">
             <!-- Parent activity meta-data to support API level 15 and lower -->
@@ -34,7 +34,7 @@
 
         <!-- Declaration for the new Note Preview Activity -->
         <activity
-            android:name=".ui.notepreview.NotePreviewActivity"
+            android:name=".features.notepreview.NotePreviewActivity"
             android:exported="false"
             android:label="@string/note_preview_title"
             android:parentActivityName=".MainActivity"
@@ -58,7 +58,7 @@
 
         <!-- Drawing Activity Declaration -->
         <activity
-            android:name=".ui.drawing.DrawingActivity"
+            android:name=".features.drawing.DrawingActivity"
             android:exported="false"
             android:label="Draw Note"
             android:theme="@style/Theme.ScribeAI.NoActionBar" /> <!-- Use NoActionBar or customize

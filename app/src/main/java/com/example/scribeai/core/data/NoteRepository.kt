@@ -1,4 +1,4 @@
-package com.example.scribeai.data
+package com.example.scribeai.core.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

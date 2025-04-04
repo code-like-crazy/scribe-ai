@@ -1,4 +1,4 @@
-package com.example.scribeai.ui.notelist
+package com.example.scribeai.features.notelist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.scribeai.R
-import com.example.scribeai.data.Note
+import com.example.scribeai.core.data.Note // Explicitly import Note
 import com.example.scribeai.databinding.NoteItemBinding
 import java.text.SimpleDateFormat
 import java.util.*

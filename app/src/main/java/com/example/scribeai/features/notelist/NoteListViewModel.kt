@@ -1,10 +1,10 @@
-package com.example.scribeai.ui.notelist
+package com.example.scribeai.features.notelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.scribeai.data.Note
-import com.example.scribeai.data.NoteRepository
+import com.example.scribeai.core.data.Note // Explicitly import Note
+import com.example.scribeai.core.data.NoteRepository // Explicitly import NoteRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
