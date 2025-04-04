@@ -8,9 +8,11 @@
     <string name="note_title_hint">Title</string>
     <string name="note_content_hint">Content</string>
     <string name="action_save">Save</string>
-    <string name="error_empty_note">Note cannot be empty</string>
+    <string name="error_empty_note">Note cannot be empty. Add a title or image/drawing.</string> <!--
+    Updated error message -->
     <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
     <string name="search_hint">Search notes...</string>    <!-- Added for MainActivity search -->
+    <string name="action_discard">Discard</string> <!-- Added for Snackbar action -->
 
     <!-- Input Mode Selection -->
     <string name="input_mode_label">Input Mode:</string>
