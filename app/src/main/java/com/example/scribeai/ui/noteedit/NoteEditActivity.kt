@@ -6,13 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-// Removed Menu and MenuItem imports
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AlertDialog // Import AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels // Import viewModels delegate
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider // Import FileProvider
 import com.bumptech.glide.Glide // Import Glide
 import com.example.scribeai.R
 import com.example.scribeai.data.AppDatabase // Import AppDatabase
@@ -24,6 +25,13 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
+import android.graphics.Bitmap // Import Bitmap
+import java.io.File // Import File
+import java.io.FileOutputStream // Import FileOutputStream
+import java.io.IOException // Import IOException
+import java.text.SimpleDateFormat // Import SimpleDateFormat
+import java.util.Date // Import Date
+import java.util.Locale // Import Locale
 
 class NoteEditActivity : AppCompatActivity() {
 
@@ -93,20 +101,40 @@ class NoteEditActivity : AppCompatActivity() {
 
     private fun setupInputModeButtons() {
         binding.buttonModeType.setOnClickListener {
-            // TODO: Switch to text input mode (show/hide relevant views)
-            Toast.makeText(this, "Text Mode selected (Not fully implemented)", Toast.LENGTH_SHORT).show()
-            hideImagePreview() // Hide image if switching back to text
+            // Switch to text input mode
+            binding.contentInputLayout.visibility = View.VISIBLE
+            binding.imagePreview.visibility = View.GONE
+            binding.drawingView.visibility = View.GONE
+            // Optionally clear drawing view? binding.drawingView.clearCanvas()
+            Toast.makeText(this, "Text Mode", Toast.LENGTH_SHORT).show() // Simplified Toast
         }
         binding.buttonModeDraw.setOnClickListener {
-            // TODO: Switch to drawing mode
-            Toast.makeText(this, "Draw Mode selected (Not implemented)", Toast.LENGTH_SHORT).show()
-            hideImagePreview()
+            // Switch to drawing mode
+            binding.contentInputLayout.visibility = View.GONE
+            binding.imagePreview.visibility = View.GONE
+            binding.drawingView.visibility = View.VISIBLE
+            Toast.makeText(this, "Draw Mode", Toast.LENGTH_SHORT).show() // Simplified Toast
         }
         binding.buttonModeCamera.setOnClickListener {
-            // For now, just launch gallery picker. Camera capture later.
-            // TODO: Add dialog to choose Camera or Gallery
-            launchGalleryPicker()
+            // Keep text input visible for potential OCR results
+            binding.contentInputLayout.visibility = View.VISIBLE
+            binding.drawingView.visibility = View.GONE
+            // Image preview visibility is handled by show/hideImagePreview
+            showImageSourceDialog() // Show dialog to choose Camera or Gallery
         }
+    }
+
+    private fun showImageSourceDialog() {
+        val options = arrayOf(getString(R.string.dialog_option_camera), getString(R.string.dialog_option_gallery))
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_title_select_image_source))
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> launchCamera() // Camera selected
+                    1 -> launchGalleryPicker() // Gallery selected
+                }
+            }
+            .show()
     }
 
     private fun setupActivityResultLaunchers() {
@@ -126,7 +154,33 @@ class NoteEditActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: Setup takePictureLauncher later
+        // Setup takePictureLauncher
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                imageUriForCamera?.let { uri ->
+                    Log.d(TAG, "Image captured successfully: $uri")
+                    viewModel.setSelectedImageUri(uri) // Pass URI to ViewModel
+                    showImagePreview(uri)
+                    processImageForOcr(uri)
+                } ?: run {
+                     Log.e(TAG, "Camera returned success but imageUriForCamera is null")
+                     Toast.makeText(this, "Failed to get captured image", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.d(TAG, "Image capture cancelled or failed")
+                // Optionally delete the temporary file if capture failed/cancelled
+                imageUriForCamera?.let { uri ->
+                    try {
+                        contentResolver.delete(uri, null, null)
+                        Log.d(TAG, "Temporary camera file deleted: $uri")
+                    } catch (e: SecurityException) {
+                        Log.e(TAG, "Error deleting temporary camera file", e)
+                    }
+                }
+            }
+            // Reset temporary URI holder
+            imageUriForCamera = null
+        }
     }
 
     private fun launchGalleryPicker() {
@@ -134,9 +188,47 @@ class NoteEditActivity : AppCompatActivity() {
         pickImageLauncher.launch(intent)
     }
 
-    // TODO: Implement launchCamera() later
+    // Launch camera intent
+    private fun launchCamera() {
+        try {
+            val photoFile: File = createImageFile()
+            imageUriForCamera = FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.provider", // Match authority in AndroidManifest.xml
+                photoFile
+            )
+            takePictureLauncher.launch(imageUriForCamera)
+        } catch (ex: IOException) {
+            Log.e(TAG, "Error creating image file for camera", ex)
+            Toast.makeText(this, "Could not start camera", Toast.LENGTH_SHORT).show()
+        } catch (ex: IllegalArgumentException) {
+             Log.e(TAG, "Error getting URI for file provider. Check authority.", ex)
+             Toast.makeText(this, "Could not start camera (File Provider issue)", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Helper to create a unique image file
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = getExternalFilesDir(null) // Use app-specific external storage
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save file path for use with ACTION_VIEW intents
+            // currentPhotoPath = absolutePath // If needed elsewhere
+            Log.d(TAG, "Created image file: $absolutePath")
+        }
+    }
+
 
     private fun showImagePreview(imageUri: Uri) {
+        // When showing image, hide text input and drawing view
+        binding.contentInputLayout.visibility = View.GONE
+        binding.drawingView.visibility = View.GONE
         binding.imagePreview.visibility = View.VISIBLE
         Glide.with(this)
             .load(imageUri)
@@ -148,9 +240,11 @@ class NoteEditActivity : AppCompatActivity() {
     }
 
      private fun hideImagePreview() {
+        // When hiding image (e.g., switching mode), ensure text input is visible
+        // and drawing view is hidden.
         binding.imagePreview.visibility = View.GONE
-        // Optionally show the text content input when hiding image
-        // binding.contentInputLayout.visibility = View.VISIBLE
+        binding.drawingView.visibility = View.GONE
+        binding.contentInputLayout.visibility = View.VISIBLE
     }
 
     private fun processImageForOcr(imageUri: Uri) {
@@ -195,21 +289,68 @@ class NoteEditActivity : AppCompatActivity() {
 
     private fun saveNote() {
         val title = binding.titleEditText.text.toString().trim()
+        // Content might be empty if it's just a drawing
         val content = binding.contentEditText.text.toString().trim()
+        var drawingUri: Uri? = null
 
-        if (title.isEmpty() && content.isEmpty()) {
+        // Check if drawing view is visible and potentially save the drawing
+        if (binding.drawingView.visibility == View.VISIBLE) {
+            try {
+                val bitmap = binding.drawingView.getBitmap()
+                // Save bitmap to a file and get its URI
+                val drawingFile = createDrawingFile() // Similar to createImageFile but maybe different prefix/suffix
+                FileOutputStream(drawingFile).use { fos ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos) // Save as PNG
+                }
+                drawingUri = FileProvider.getUriForFile(
+                    this,
+                    "${applicationContext.packageName}.provider",
+                    drawingFile
+                )
+                Log.d(TAG, "Drawing saved to URI: $drawingUri")
+                // Set the URI in the ViewModel *before* calling saveNote
+                viewModel.setSelectedImageUri(drawingUri)
+
+            } catch (e: IOException) {
+                Log.e(TAG, "Error saving drawing", e)
+                Toast.makeText(this, "Failed to save drawing", Toast.LENGTH_SHORT).show()
+                // Decide if saving should be aborted or continue without drawing
+                return // Abort saving if drawing fails
+            }
+        }
+
+        // Check if the note is empty (considering title, content, and potential drawing/image)
+        // The ViewModel's selectedImageUri holds either gallery/camera URI or the new drawing URI
+        val imageUriIsSet = viewModel.selectedImageUri.value != null
+        if (title.isEmpty() && content.isEmpty() && !imageUriIsSet) {
             Snackbar.make(binding.root, R.string.error_empty_note, Snackbar.LENGTH_SHORT).show()
             return
         }
 
-        // Call ViewModel to save the note
-        // ViewModel now handles imageUri internally based on selectedImageUri LiveData
+
+        // Call ViewModel to save the note.
+        // If drawing was saved, its URI is already set in the ViewModel.
+        // If gallery/camera image was selected, its URI is also set.
         viewModel.saveNote(title, content)
 
         // Show confirmation, set result, and finish
         Toast.makeText(this, R.string.note_saved_confirmation, Toast.LENGTH_SHORT).show() // Use Toast for simplicity
         setResult(Activity.RESULT_OK) // Signal success to MainActivity/NotePreviewActivity
         finish()
+    }
+
+     // Helper to create a unique file for drawings (similar to createImageFile)
+    @Throws(IOException::class)
+    private fun createDrawingFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = getExternalFilesDir(null) // Use app-specific external storage
+        return File.createTempFile(
+            "DRAWING_${timeStamp}_", /* prefix */
+            ".png", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            Log.d(TAG, "Created drawing file: $absolutePath")
+        }
     }
 
     // TODO: Add onBackPressed handling for unsaved changes confirmation

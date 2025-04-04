@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Define the path for images stored in the app's external files directory -->
+    <external-files-path name="my_images" path="." />
+    <!-- You can add other paths here if needed, e.g., external-cache-path -->
+</paths>

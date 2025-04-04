@@ -95,8 +95,17 @@
                 android:scaleType="centerInside" android:visibility="gone"
                 android:contentDescription="@string/image_preview_desc"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" tools:visibility="visible" />
-            <!-- tools:visibility for layout preview -->            <!--
-            TODO: Add container for drawing canvas -->
+            <!-- tools:visibility for layout preview -->
+
+            <!-- Drawing Canvas Container -->
+            <com.example.scribeai.ui.views.DrawingView
+                android:id="@+id/drawing_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:background="@android:color/darker_gray" />
+            <!-- Background for visibility during layout design -->
 
             <!-- Save Button - Lively Green -->
             <Button

@@ -39,4 +39,9 @@
     <string name="action_cancel">Cancel</string>
     <string name="note_deleted_confirmation">Note deleted</string>
 
+    <!-- Image Source Selection Dialog -->
+    <string name="dialog_title_select_image_source">Select Image Source</string>
+    <string name="dialog_option_camera">Camera</string>
+    <string name="dialog_option_gallery">Gallery</string>
+
 </resources>
