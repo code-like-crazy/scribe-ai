@@ -118,73 +118,82 @@
                 android:textSize="16sp"
                 android:lineSpacingMultiplier="1.2"
                 android:textColor="@color/primary"
-                android:layout_marginBottom="96dp"
+                android:layout_marginBottom="24dp"
                 tools:text="This is the content of the note. It could be quite long, spanning multiple lines and paragraphs." />
+
+            <!-- Tags Section -->
+            <LinearLayout
+                android:id="@+id/tags_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tags"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/muted_foreground"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="4dp">
+                    <!-- Chips will be added programmatically -->
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Sample Tag 1" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Another Tag" />
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_edit_note"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="@string/edit_note"
+                    android:textSize="16sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_draw_24"
+                    app:iconGravity="textStart"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="@color/primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_delete_note"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="@string/delete_note"
+                    android:textSize="16sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_delete_24"
+                    app:iconGravity="textStart"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="@color/destructive" />
+            </LinearLayout>
 
         </LinearLayout>
 
-
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:elevation="8dp"
-        app:cardElevation="8dp"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
-
-        <!-- Add horizontal margin to the CardView to contain the buttons -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="12dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_edit_note"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:text="@string/edit_note"
-                android:textSize="16sp"
-                app:cornerRadius="8dp"
-                app:icon="@drawable/ic_draw_24"
-                app:iconGravity="textStart"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/primary"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline_middle" />
-            <!-- Ensure tag is closed correctly -->
-
-            <!-- Add a guideline for splitting space -->
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_middle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_delete_note"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:text="@string/delete_note"
-                android:textSize="16sp"
-                app:cornerRadius="8dp"
-                app:icon="@drawable/ic_delete_24"
-                app:iconGravity="textStart"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@color/destructive"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/guideline_middle"
-                app:layout_constraintEnd_toEndOf="parent" />
-            <!-- Ensure tag is closed correctly -->
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

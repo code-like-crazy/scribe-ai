@@ -18,6 +18,7 @@ import com.example.scribeai.databinding.ActivityNotePreviewBinding
 import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.noteedit.NoteEditViewModel
 import com.example.scribeai.ui.noteedit.NoteEditViewModelFactory
+import com.google.android.material.chip.Chip // Import Chip
 
 class NotePreviewActivity : AppCompatActivity() {
 
@@ -105,6 +106,24 @@ class NotePreviewActivity : AppCompatActivity() {
                     .into(binding.imagePreview) // Load into the ImageView
         }
                 ?: run { binding.imageSection.visibility = View.GONE } // Hide the LinearLayout
+
+        // Handle tags
+        if (note.tags.isNotEmpty()) {
+            binding.tagsSection.visibility = View.VISIBLE // Ensure binding is used
+            binding.chipGroupTags.removeAllViews() // Ensure binding is used, Clear previous chips
+            note.tags.forEach { tag ->
+                val chip =
+                        Chip(this).apply { // Ensure binding is used
+                            text = tag
+                            // Optional: Add styling or click listeners to chips here
+                            // setChipBackgroundColorResource(R.color.chip_background)
+                            // setTextColorResource(R.color.chip_text)
+                        }
+                binding.chipGroupTags.addView(chip)
+            }
+        } else {
+            binding.tagsSection.visibility = View.GONE // Ensure binding is used
+        }
     }
 
     private fun showDeleteConfirmationDialog() {

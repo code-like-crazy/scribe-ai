@@ -8,6 +8,7 @@
     <string name="note_title_hint">Title</string>
     <string name="note_content_hint">Content</string>
     <string name="action_save">Save</string>
+    <string name="error_empty_title">Title cannot be empty</string> <!-- Added -->
     <string name="error_empty_note">Note cannot be empty. Add a title or image/drawing.</string> <!--
     Updated error message -->
     <string name="error_empty_tag">Tag cannot be empty</string> <!-- Added -->

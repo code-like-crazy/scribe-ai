@@ -5,11 +5,16 @@ package com.example.scribeai.ui.noteedit
 // ML Kit imports
 // Java IO/Util
 // Local UI components
-import android.app.Activity
+import android.app.Activity // Re-added import
+import android.content.Context // Import Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent // Import MotionEvent
+import android.view.View // Import View
 import android.view.inputmethod.EditorInfo // Import EditorInfo
+import android.view.inputmethod.InputMethodManager // Import InputMethodManager
+import android.widget.EditText // Import EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +76,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
         observeNoteDetails() // Observe ViewModel for note data
         setupTagInput() // Setup tag input listeners
         setupSaveButton() // Setup save button listener
+        setupKeyboardDismissal() // Setup touch listener for keyboard dismissal
     }
 
     private fun setupToolbar() {
@@ -243,17 +249,17 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
         binding.buttonSaveNote.setOnClickListener { saveNoteAndFinish() }
     }
 
-    // Handle back navigation (toolbar home button) - Save note on navigate up
+    // Handle back navigation (toolbar home button) - Just finish without saving
     override fun onSupportNavigateUp(): Boolean {
-        saveNoteAndFinish()
+        finish() // Simply finish the activity
         return true
     }
 
-    // Handle system back button press - Save note on back press
+    // Handle system back button press - Just finish without saving
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        saveNoteAndFinish()
-        // super.onBackPressed() // Don't call super because we finish the activity
+        finish() // Simply finish the activity
+        // super.onBackPressed() // Call super if you want default back behavior + finishing
     }
 
     private fun saveNoteAndFinish() {
@@ -261,8 +267,19 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
         val content = binding.contentEditText.text.toString().trim()
         val imageUri = viewModel.selectedImageUri.value
 
-        // Validation remains the same
-        if (title.isEmpty() && imageUri == null) {
+        // --- Validation ---
+        // 1. Check if title is empty
+        if (title.isEmpty()) {
+            binding.titleInputLayout.error =
+                    getString(R.string.error_empty_title) // Show error on the field, removed toast
+            return // Stop saving
+        } else {
+            binding.titleInputLayout.error = null // Clear error if title is not empty
+        }
+
+        // 2. Check if both title and image are missing (existing check)
+        if (title.isEmpty() && imageUri == null
+        ) { // This check might be redundant now but kept for safety
             com.google.android.material.snackbar.Snackbar.make(
                             binding.root,
                             R.string.error_empty_note,
@@ -291,6 +308,36 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback {
 
     private fun showErrorToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    // --- Keyboard Dismissal Logic ---
+    private fun setupKeyboardDismissal() {
+        // Add explicit types to lambda parameters
+        binding.nestedScrollView.setOnTouchListener { v: View, event: MotionEvent ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                hideKeyboard()
+                v.clearFocus() // Clear focus from the scroll view itself if needed
+                // Also clear focus from any EditText that might have it
+                currentFocus?.let { focusedView ->
+                    if (focusedView is EditText) {
+                        focusedView.clearFocus()
+                    }
+                }
+            }
+            // Return false so touch events are still processed for scrolling etc.
+            false
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = currentFocus
+        // If no view currently has focus, create a new one, just so we can grab a window token from
+        // it
+        if (view == null) {
+            view = View(this)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     // Removed methods now handled by managers:

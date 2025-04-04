@@ -36,6 +36,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -68,7 +69,9 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Text"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:textColor="@color/primary"
+                    app:strokeColor="@color/border"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_text_format_24"
                     app:iconTint="@color/primary"
@@ -80,7 +83,9 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Image"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:textColor="@color/primary"
+                    app:strokeColor="@color/border"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_camera_alt_24"
                     app:iconTint="@color/primary" />
@@ -196,10 +201,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_add_tag"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Add"
                     android:textColor="@color/primary"
+                    app:strokeColor="@color/border"
                     app:cornerRadius="8dp" />
             </LinearLayout>
 
