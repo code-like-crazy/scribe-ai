@@ -1,11 +1,14 @@
 package com.example.scribeai
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View // Import View
 import android.widget.SearchView // Use android.widget.SearchView for compatibility
 import android.widget.Toast
-import androidx.activity.viewModels // Import for viewModels delegate
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible // Import isVisible extension
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.NoteRepository
 import com.example.scribeai.databinding.ActivityMainBinding // Import generated ViewBinding class
+import com.example.scribeai.ui.noteedit.NoteEditActivity // Import NoteEditActivity
 import com.example.scribeai.ui.notelist.NoteListViewModel
 import com.example.scribeai.ui.notelist.NoteListViewModelFactory
 import com.example.scribeai.ui.notelist.NotesAdapter
@@ -52,34 +56,11 @@ class MainActivity : AppCompatActivity() {
 
         // Observe notes from ViewModel
         observeNotes()
+
+        // Setup Empty State Button Listener
+        setupEmptyStateButton()
     }
 
-    private fun setupRecyclerView() {
-        notesAdapter = NotesAdapter { note ->
-            // Handle note item click -> Navigate to Note Detail Screen later
-            Toast.makeText(this, "Clicked on: ${note.title}", Toast.LENGTH_SHORT).show()
-            Log.d("MainActivity", "Clicked note ID: ${note.id}")
-            // Intent intent = new Intent(this, NoteDetailActivity.class);
-            // intent.putExtra("NOTE_ID", note.id);
-            // startActivity(intent);
-        }
-
-        binding.notesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = notesAdapter
-            // Optional: Add ItemDecoration for spacing if needed
-        }
-    }
-
-     private fun setupFab() {
-        binding.fabAddNote.setOnClickListener {
-            // Handle FAB click -> Navigate to Note Creation Screen later
-             Toast.makeText(this, "Add new note clicked", Toast.LENGTH_SHORT).show()
-             Log.d("MainActivity", "FAB clicked")
-            // Intent intent = new Intent(this, NoteCreateActivity.class);
-            // startActivity(intent);
-        }
-    }
 
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -104,8 +85,48 @@ class MainActivity : AppCompatActivity() {
                     // Submit the updated list to the ListAdapter
                     notesAdapter.submitList(notesList)
                     Log.d("MainActivity", "Notes observed: ${notesList.size}")
+
+                    // Toggle empty state visibility
+                    binding.notesRecyclerView.isVisible = notesList.isNotEmpty()
+                    binding.emptyStateLayout.isVisible = notesList.isEmpty()
                 }
             }
+        }
+    }
+
+    private fun setupEmptyStateButton() {
+        binding.emptyStateAddButton.setOnClickListener {
+            // Same action as FAB
+            launchNoteEditActivity()
+        }
+    }
+
+    // Helper function to launch NoteEditActivity (used by FAB and empty state button)
+    private fun launchNoteEditActivity(noteId: Long? = null) {
+        val intent = Intent(this, NoteEditActivity::class.java).apply {
+            if (noteId != null) {
+                putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId)
+            }
+        }
+        startActivity(intent)
+    }
+
+    // Update setupFab and setupRecyclerView to use the helper function
+    private fun setupFab() {
+        binding.fabAddNote.setOnClickListener {
+            launchNoteEditActivity() // No ID for new note
+        }
+    }
+
+    private fun setupRecyclerView() {
+        notesAdapter = NotesAdapter { note ->
+            launchNoteEditActivity(note.id) // Pass ID for editing
+        }
+
+        binding.notesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = notesAdapter
+            // Optional: Add ItemDecoration for spacing if needed
         }
     }
 }

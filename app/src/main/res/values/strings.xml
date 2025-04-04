@@ -1,4 +1,26 @@
 <resources>
     <string name="app_name">ScribeAI</string>
     <string name="add_new_note">Add New Note</string>    <!-- Content description for FAB -->
+
+    <!-- Note Edit Screen -->
+    <string name="title_new_note">New Note</string>
+    <string name="title_edit_note">Edit Note</string>
+    <string name="note_title_hint">Title</string>
+    <string name="note_content_hint">Content</string>
+    <string name="action_save">Save</string>
+    <string name="error_empty_note">Note cannot be empty</string>
+    <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
+    <string name="search_hint">Search notes...</string>    <!-- Added for MainActivity search -->
+
+    <!-- Input Mode Selection -->
+    <string name="input_mode_label">Input Mode:</string>
+    <string name="mode_type_desc">Type Text</string>
+    <string name="mode_draw_desc">Draw Note</string>
+    <string name="mode_camera_desc">Use Camera/Image</string>
+    <string name="image_preview_desc">Image Preview</string>    <!-- Added for ImageView -->
+
+    <!-- Empty State -->
+    <string name="empty_notes_message">No notes yet!</string>
+    <string name="add_first_note">Add your first note</string>
+
 </resources>

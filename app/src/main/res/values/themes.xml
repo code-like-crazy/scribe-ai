@@ -15,7 +15,8 @@
         <item name="android:statusBarColor">@color/scribe_white_background</item>
         <item name="android:windowLightStatusBar">true</item>        <!-- Make status bar icons dark -->
         <!-- Background color. -->
-        <item name="android:colorBackground">@color/scribe_white_background</item>        <!-- Corrected reference -->
+        <item name="android:colorBackground">@color/scribe_white_background</item>        <!-- Corrected
+        reference -->
         <item name="colorOnBackground">@color/colorOnBackground</item>
         <!-- Surface color (cards, sheets, menus) -->
         <item name="colorSurface">@color/colorSurface</item>
@@ -31,13 +32,20 @@
     <!-- Inherit from Base Theme -->
     <style name="Theme.ScribeAI" parent="Base.Theme.ScribeAI" />
 
+    <!-- AppBar Theme -->
+    <style name="Theme.ScribeAI.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+
+    <!-- Popup Theme (for menus etc.) -->
+    <style name="Theme.ScribeAI.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
+
     <!-- Custom Button Style -->
     <style name="Widget.App.Button" parent="Widget.Material3.Button">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
     </style>
 
     <!-- Shape Appearance for Rounded Corners -->
-    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+    <style name="ShapeAppearance.App.SmallComponent"
+        parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>        <!-- Rounded corners as per PRD -->
     </style>

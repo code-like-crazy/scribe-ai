@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.noteedit.NoteEditActivity"> <!-- Added missing > -->
+    <!-- Add fitsSystemWindows="true" to handle status bar -->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/Theme.ScribeAI.AppBarOverlay"> <!-- Added missing > -->
+        <!-- Add fitsSystemWindows="true" here too -->
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/title_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/note_title_hint">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/title_edit_text" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:inputType="textCapSentences"
+                    android:textSize="20sp" android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/content_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:hint="@string/note_content_hint">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/content_edit_text" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences" android:minLines="5" />
+            </com.google.android.material.textfield.TextInputLayout>            <!--
+            Input Mode Selection -->
+            <LinearLayout android:id="@+id/input_mode_selector" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal"
+                android:gravity="center_vertical" android:layout_marginTop="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/input_mode_label" android:layout_marginEnd="8dp"
+                    style="@style/TextAppearance.Material3.LabelLarge" />
+                <!-- TODO: Replace with actual icons and potentially use ToggleButton or RadioGroup
+                for better state management -->
+                <ImageButton
+                    android:id="@+id/button_mode_type"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_text_format_24"
+                    android:contentDescription="@string/mode_type_desc"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageButton
+                    android:id="@+id/button_mode_draw"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_draw_24"
+                    android:contentDescription="@string/mode_draw_desc"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageButton
+                    android:id="@+id/button_mode_camera"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_camera_alt_24"
+                    android:contentDescription="@string/mode_camera_desc"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp" />
+
+            </LinearLayout>            <!--
+            Image Preview for OCR -->
+            <ImageView android:id="@+id/image_preview" android:layout_width="match_parent"
+                android:layout_height="200dp" android:layout_marginTop="16dp"
+                android:scaleType="centerInside" android:visibility="gone"
+                android:contentDescription="@string/image_preview_desc"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" tools:visibility="visible" />
+            <!-- tools:visibility for layout preview -->            <!--
+            TODO: Add container for drawing canvas -->
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>    <!--
+    TODO: Add Save FAB or menu item later -->
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

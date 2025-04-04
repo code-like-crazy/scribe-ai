@@ -3,11 +3,13 @@
     <style name="Base.Theme.ScribeAI" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>        <!-- Consider adjusting for dark theme contrast if needed -->
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>        <!-- Consider adjusting
+        for dark theme contrast if needed -->
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>        <!-- Consider adjusting for dark theme contrast if needed -->
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>        <!-- Consider
+        adjusting for dark theme contrast if needed -->
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <!-- Accent color. -->
         <item name="colorAccent">@color/colorAccent</item>
@@ -29,4 +31,11 @@
     </style>
 
     <!-- Theme.ScribeAI inherits Base.Theme.ScribeAI implicitly via DayNight parent -->
+
+    <!-- AppBar Theme (Dark) - Usually inherits from Dark.ActionBar -->
+    <style name="Theme.ScribeAI.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+
+    <!-- Popup Theme (Dark) - Usually inherits from Material3.Dark -->
+    <style name="Theme.ScribeAI.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
+
 </resources>

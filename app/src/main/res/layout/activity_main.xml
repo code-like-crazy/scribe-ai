@@ -1,23 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout android:id="@+id/appBarLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:fitsSystemWindows="true">
+    <com.google.android.material.appbar.AppBarLayout android:id="@+id/appBarLayout"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
-        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:title="@string/app_name" app:layout_scrollFlags="scroll|enterAlways|snap">
+        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar"
+            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name" app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <!-- Search View integrated into Toolbar -->
-            <SearchView android:id="@+id/searchView" android:layout_width="match_parent" android:layout_height="wrap_content" android:iconifiedByDefault="true" android:queryHint="Search notes..." app:showAsAction="ifRoom|collapseActionView" app:actionViewClass="android.widget.SearchView" />
+            <SearchView android:id="@+id/searchView" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:iconifiedByDefault="true"
+                android:queryHint="Search notes..." app:showAsAction="ifRoom|collapseActionView"
+                app:actionViewClass="android.widget.SearchView" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/notesRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="8dp" android:clipToPadding="false" app:layout_behavior="@string/appbar_scrolling_view_behavior" tools:listitem="@layout/note_item" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/notesRecyclerView"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:padding="8dp" android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/note_item" />
     <!-- Added padding and tools:listitem -->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/fabAddNote" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end" android:layout_margin="16dp" android:contentDescription="@string/add_new_note" app:srcCompat="@drawable/ic_add_24" />
+    <!-- Empty State Layout -->
+    <LinearLayout
+        android:id="@+id/emptyStateLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"> <!-- Show in preview -->
+
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_notes_message"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/emptyStateAddButton"
+            style="@style/Widget.App.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_first_note" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddNote" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_gravity="bottom|end"
+        android:layout_margin="16dp" android:contentDescription="@string/add_new_note"
+        app:srcCompat="@drawable/ic_add_24" />
     <!-- FAB: Added content description -->
     <!-- FAB: Changed to a vector drawable -->
 
