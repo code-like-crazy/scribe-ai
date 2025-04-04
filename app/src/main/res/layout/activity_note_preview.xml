@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/background"
     tools:context=".ui.notepreview.NotePreviewActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -13,18 +14,19 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/Theme.ScribeAI.AppBarOverlay"
-        android:background="@color/secondary"
-        android:elevation="0dp">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:elevation="0dp"
+            app:elevation="0dp"
             android:background="@android:color/transparent"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             app:navigationIconTint="@color/foreground"
             app:titleTextColor="@color/foreground"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
 
         <!-- Divider View -->
@@ -44,142 +46,119 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="32dp"
+            android:clipToPadding="false">
 
-            <!-- Title Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Title"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="16dp" />
-
+            <!-- Title Section - Removed explicit "Title" label for cleaner look -->
             <TextView
                 android:id="@+id/text_view_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                android:textStyle="bold"
-                android:textColor="@color/primary"
-                android:layout_marginBottom="24dp"
-                tools:text="Note Title" />
+                android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                android:fontFamily="@font/funnel_display"
+                android:textColor="@color/foreground"
+                android:layout_marginBottom="8dp"
+                tools:text="An Insanely Long Note Title That Might Wrap" />
 
-            <!-- Image Section (if present) -->
-            <LinearLayout
-                android:id="@+id/image_section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Attached Image"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textColor="@color/muted_foreground"
-                    android:layout_marginBottom="12dp" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="@color/border"
-                    android:layout_marginBottom="24dp">
-
-                    <ImageView
-                        android:id="@+id/image_preview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:contentDescription="@string/image_preview_desc"
-                        android:padding="8dp"
-                        tools:src="@tools:sample/backgrounds/scenic" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-            <!-- Content Section -->
+            <!-- Author -->
             <TextView
+                android:id="@+id/text_view_note_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Content"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                android:fontFamily="@font/funnel_display"
                 android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:text="By Araf" />
 
+            <!-- Date/Time -->
+            <TextView
+                android:id="@+id/text_view_note_datetime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:fontFamily="@font/funnel_display"
+                android:textColor="@color/muted_foreground"
+                android:layout_marginBottom="20dp"
+                tools:text="April 4, 2025, 8:35 AM" />
+
+            <!-- Horizontal Rule -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Content Section - Removed explicit "Content" label -->
+            <!-- Content -->
             <TextView
                 android:id="@+id/text_view_note_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textSize="16sp"
-                android:lineSpacingMultiplier="1.4"
-                android:textColor="@color/primary"
-                android:layout_marginBottom="16dp"
-                tools:text="This is the content of the note. It could be quite long, spanning multiple lines and paragraphs." />
+                android:fontFamily="@font/funnel_display"
+                android:textSize="17sp"
+                android:lineSpacingMultiplier="1.5"
+                android:textColor="@color/foreground"
+                android:layout_marginBottom="28dp"
+                tools:text="This is the content of the note, rendered using Markwon. It supports basic **Markdown** like *italics*, `code spans`, and [links](https://example.com).\n\nNew paragraphs are handled nicely.\n\n - Lists too!\n - Another item." />
 
-            <!-- Tags Section -->
+            <!-- Tags Section - Removed explicit "Tags" label -->
             <LinearLayout
                 android:id="@+id/tags_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tags"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textColor="@color/muted_foreground"
-                    android:layout_marginBottom="4dp" />
-
+                <!-- Tags -->
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:chipSpacingHorizontal="8dp"
-                    app:chipSpacingVertical="4dp">
+                    app:chipSpacingVertical="6dp">
                     <!-- Chips will be added programmatically -->
+                    <!-- Example styled chip for tools preview -->
                     <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Suggestion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Sample Tag 1" />
+                        android:textColor="@color/foreground"
+                        app:chipBackgroundColor="@color/secondary"
+                        tools:text="Meeting Notes" />
                     <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Suggestion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Another Tag" />
+                        android:textColor="@color/foreground"
+                        app:chipBackgroundColor="@color/secondary"
+                        tools:text="Project Alpha" />
                 </com.google.android.material.chip.ChipGroup>
-
             </LinearLayout>
 
-            <!-- Action Buttons -->
+            <!-- Action Buttons - Grouped at the bottom -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="24dp">
+                android:gravity="center_vertical|end"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
 
-                <!-- Using style for icon-only button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_share_note"
                     style="@style/Widget.Material3.Button.IconButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_share_24"
-                    app:iconTint="@color/primary"
+                    app:iconTint="@color/muted_foreground"
                     android:contentDescription="@string/share_note"
-                    android:layout_marginHorizontal="16dp" />
+                    android:layout_marginEnd="12dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_edit_note"
@@ -187,9 +166,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_draw_24"
-                    app:iconTint="@color/primary"
+                    app:iconTint="@color/muted_foreground"
                     android:contentDescription="@string/edit_note"
-                    android:layout_marginHorizontal="16dp" />
+                    android:layout_marginEnd="12dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_delete_note"
@@ -198,12 +177,42 @@
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_delete_24"
                     app:iconTint="@color/destructive"
-                    android:contentDescription="@string/delete_note"
-                    android:layout_marginHorizontal="16dp" />
+                    android:contentDescription="@string/delete_note" />
+            </LinearLayout>
+
+            <!-- Image Section (Moved to the bottom) -->
+            <LinearLayout
+                android:id="@+id/image_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <!-- Removed explicit "Attached Image" label -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border">
+
+                    <ImageView
+                        android:id="@+id/image_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="400dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/image_preview_desc"
+                        tools:src="@tools:sample/backgrounds/scenic" />
+
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

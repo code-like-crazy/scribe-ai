@@ -1,6 +1,8 @@
 package com.example.scribeai.ui.notepreview
 
 // Markwon imports
+// import io.noties.markwon.core.CorePlugin // Removed temporarily
+// import io.noties.markwon.core.MarkwonTheme // Removed temporarily
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -23,6 +25,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import io.noties.markwon.Markwon
 import io.noties.markwon.linkify.LinkifyPlugin
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NotePreviewActivity : AppCompatActivity() {
 
@@ -44,11 +48,19 @@ class NotePreviewActivity : AppCompatActivity() {
         binding = ActivityNotePreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Markwon
+        // Initialize Markwon (Theme application removed temporarily to resolve build errors)
+        // TODO: Re-add theme application via CorePlugin once dimen errors resolve after build/sync
+        // val theme = MarkwonTheme.builderWithDefaults(this)
+        //     .codeBlockMargin(resources.getDimensionPixelSize(R.dimen.code_block_margin))
+        //
+        // .listItemMarginBottom(resources.getDimensionPixelSize(R.dimen.list_item_margin_bottom))
+        //     .build()
+
         markwon =
                 Markwon.builder(this)
                         .usePlugin(LinkifyPlugin.create()) // Enable link detection
-                        .build()
+                        // .usePlugin(CorePlugin.create()) // Using default CorePlugin implicitly
+                        .build() // Build without custom theme for now
 
         setupToolbar()
         noteId = intent.getLongExtra(NoteEditActivity.EXTRA_NOTE_ID, -1L)
@@ -104,6 +116,16 @@ class NotePreviewActivity : AppCompatActivity() {
 
         // Set title
         binding.textViewNoteTitle.text = note.title
+
+        // Set Author (already hardcoded in layout)
+        // binding.textViewNoteAuthor.text = "By Araf" // Or dynamically if needed
+
+        // Set Date/Time using the note's createdAt timestamp
+        val dateFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())
+        val formattedDate =
+                dateFormat.format(Date(note.createdAt)) // Assign to intermediate variable
+        binding.textViewNoteDatetime.text = formattedDate // Assign variable to TextView
+
         // Render content using Markwon
         markwon.setMarkdown(binding.textViewNoteContent, note.content ?: "")
 

@@ -118,16 +118,23 @@ class NoteEditGeminiProcessor(
                     return@launch
                 }
 
-                // Updated prompt requesting Markdown, avoiding H1 (#), and fitting the structured
-                // output schema
+                // Enhanced prompt requesting varied Markdown, H2/H3 headings, embedded links, and
+                // fitting the structured output schema
                 val prompt =
                         """
-                Analyze the image provided and extract all text content.
-                Format the extracted text clearly as notes using Markdown syntax. Use list items (`- item`) and bold text (`**bold**`) for structure and emphasis.
-                AVOID using single hash (#) for H1 headings as they are too large. If headings are necessary, use H2 (##) or H3 (###).
-                Focus solely on presenting the extracted information as Markdown notes.
-                Do NOT include any introductory phrases, explanations, summaries, or conversational text.
-                The output MUST be a JSON object matching the specified schema, containing only the extracted notes in Markdown format within the 'extracted_notes_markdown' field.
+                Analyze the image provided and extract all text content meticulously.
+                Format the extracted text clearly and aesthetically as notes using Markdown syntax.
+                Employ varied formatting suitable for notes, such as:
+                - Paragraphs for descriptive text.
+                - Bullet points (`- item`) or numbered lists (`1. item`) for lists.
+                - Bold (`**bold**`) and italics (`*italic*`) for emphasis.
+                - Headings (use H2 `##` or H3 `###` ONLY if appropriate for structure; AVOID H1 `#`).
+                - Blockquotes (`> quote`) if quoting text.
+                - Code blocks (```code```) if code is present.
+                Identify any URLs or clear references within the extracted text and format them as embedded Markdown links (e.g., `[ScribeAI Website](https://scribeai.example.com)`).
+                Focus solely on presenting the extracted information as well-structured Markdown notes.
+                Do NOT include any introductory phrases, explanations, summaries, or conversational text outside the Markdown content itself.
+                The output MUST be a JSON object matching the specified schema: `{"extracted_notes_markdown": "..."}`, containing only the extracted notes in Markdown format within the 'extracted_notes_markdown' field.
                 """.trimIndent()
 
                 val inputContent = content {
@@ -151,11 +158,23 @@ class NoteEditGeminiProcessor(
                         callback.onOcrSuccess(markdownText)
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to parse Gemini JSON response", e)
-                        Log.w(TAG, "Using raw response text as fallback due to JSON parsing error.")
-                        // Provide raw text but indicate it's not the expected format
-                        callback.onOcrSuccess(
-                                jsonString + "\n\n(Warning: AI response was not valid JSON.)"
-                        )
+                        // Check if the response looks like it was intended to be JSON but is
+                        // malformed
+                        if (jsonString.trimStart().startsWith("{")) {
+                            Log.e(TAG, "Malformed/incomplete JSON received: $jsonString")
+                            callback.onOcrError(
+                                    "AI response was incomplete or malformed. Please try again."
+                            )
+                        } else {
+                            // The response wasn't even trying to be JSON
+                            Log.w(
+                                    TAG,
+                                    "Received non-JSON response when JSON was expected: $jsonString"
+                            )
+                            callback.onOcrError(
+                                    "AI returned an unexpected response format. Please try again."
+                            )
+                        }
                     }
                 }
                         ?: run {
