@@ -2,17 +2,19 @@ package com.example.scribeai.ui.notepreview
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle // Added missing import
+import android.net.Uri
+import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog // Added AlertDialog import
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-// Removed Observer import as we'll observe LiveData directly
+import com.bumptech.glide.Glide
 import com.example.scribeai.R
-import com.example.scribeai.data.AppDatabase // Added missing import
+import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.Note
-import com.example.scribeai.data.NoteRepository // Added missing import
-import com.example.scribeai.databinding.ActivityNotePreviewBinding // Added ViewBinding import
+import com.example.scribeai.data.NoteRepository
+import com.example.scribeai.databinding.ActivityNotePreviewBinding
 import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.noteedit.NoteEditViewModel
 import com.example.scribeai.ui.noteedit.NoteEditViewModelFactory
@@ -36,23 +38,21 @@ class NotePreviewActivity : AppCompatActivity() {
         binding = ActivityNotePreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Retrieve noteId as Long
+        setupToolbar()
         noteId = intent.getLongExtra(NoteEditActivity.EXTRA_NOTE_ID, -1L)
 
         if (noteId != -1L) {
-            // Observe the LiveData from the ViewModel
             noteEditViewModel.note.observe(this) { note ->
                 note?.let {
                     currentNote = it
-                    binding.textViewNoteContent.text = it.content
-                    // Use ViewBinding for title if you have a Toolbar in the layout,
-                    // otherwise set Activity title directly
-                    title = it.title?.takeIf { t -> t.isNotBlank() } ?: getString(R.string.note_preview_title)
-                } ?: run {
-                    // Handle case where note is null after loading (e.g., deleted)
-                    Toast.makeText(this, R.string.error_loading_note, Toast.LENGTH_SHORT).show()
-                    finish()
+                    updateNoteDisplay(it)
                 }
+                        ?: run {
+                            // Handle case where note is null after loading (e.g., deleted)
+                            Toast.makeText(this, R.string.error_loading_note, Toast.LENGTH_SHORT)
+                                    .show()
+                            finish()
+                        }
             }
             // Trigger loading if ViewModel hasn't loaded it yet (e.g., process death)
             // The ViewModel's init block should handle initial load if noteId was passed correctly.
@@ -64,40 +64,72 @@ class NotePreviewActivity : AppCompatActivity() {
 
         binding.buttonEditNote.setOnClickListener {
             if (noteId != -1L) {
-                val intent = Intent(this, NoteEditActivity::class.java).apply {
-                    putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Pass Long ID
-                }
+                val intent =
+                        Intent(this, NoteEditActivity::class.java).apply {
+                            putExtra(NoteEditActivity.EXTRA_NOTE_ID, noteId) // Pass Long ID
+                        }
                 // Consider using ActivityResultLauncher for modern approach
                 startActivityForResult(intent, EDIT_NOTE_REQUEST_CODE)
             }
         }
 
-        binding.buttonDeleteNote.setOnClickListener {
-            showDeleteConfirmationDialog()
+        binding.buttonDeleteNote.setOnClickListener { showDeleteConfirmationDialog() }
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(true)
         }
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    private fun updateNoteDisplay(note: Note) {
+        // Update title in toolbar
+        supportActionBar?.title =
+                note.title?.takeIf { it.isNotBlank() } ?: getString(R.string.note_preview_title)
+
+        // Set title and content
+        binding.textViewNoteTitle.text = note.title
+        binding.textViewNoteContent.text = note.content
+
+        // Handle image if present
+        note.imageUri?.let { uriString ->
+            binding.imagePreview.apply {
+                visibility = android.view.View.VISIBLE
+                com.bumptech.glide.Glide.with(this@NotePreviewActivity)
+                        .load(android.net.Uri.parse(uriString))
+                        .into(this)
+            }
+        }
+                ?: run { binding.imagePreview.visibility = android.view.View.GONE }
     }
 
     private fun showDeleteConfirmationDialog() {
         currentNote?.let { noteToDelete ->
             AlertDialog.Builder(this)
-                .setTitle(R.string.delete_confirmation_title)
-                .setMessage(R.string.delete_confirmation_message)
-                .setPositiveButton(R.string.action_delete) { _, _ ->
-                    // User confirmed deletion
-                    noteEditViewModel.deleteNote(noteToDelete)
-                    Toast.makeText(this, R.string.note_deleted_confirmation, Toast.LENGTH_SHORT).show()
-                    setResult(Activity.RESULT_OK) // Signal MainActivity that something changed
-                    finish()
-                }
-                .setNegativeButton(R.string.action_cancel) { dialog, _ ->
-                    // User cancelled
-                    dialog.dismiss()
-                }
-                .show()
-        } ?: run {
-            // Should not happen if the button is only enabled when note is loaded, but handle defensively
-            Toast.makeText(this, R.string.error_loading_note, Toast.LENGTH_SHORT).show()
+                    .setTitle(R.string.delete_confirmation_title)
+                    .setMessage(R.string.delete_confirmation_message)
+                    .setPositiveButton(R.string.action_delete) { _, _ ->
+                        // User confirmed deletion
+                        noteEditViewModel.deleteNote(noteToDelete)
+                        Toast.makeText(this, R.string.note_deleted_confirmation, Toast.LENGTH_SHORT)
+                                .show()
+                        setResult(Activity.RESULT_OK) // Signal MainActivity that something changed
+                        finish()
+                    }
+                    .setNegativeButton(R.string.action_cancel) { dialog, _ ->
+                        // User cancelled
+                        dialog.dismiss()
+                    }
+                    .show()
         }
+                ?: run {
+                    // Should not happen if the button is only enabled when note is loaded, but
+                    // handle defensively
+                    Toast.makeText(this, R.string.error_loading_note, Toast.LENGTH_SHORT).show()
+                }
     }
 
     // Handle the result from NoteEditActivity

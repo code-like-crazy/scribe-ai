@@ -28,8 +28,53 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:padding="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Input Mode Selection -->
+            <LinearLayout
+                android:id="@+id/input_mode_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/mode_toggle_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_mode_type"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="Text"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_text_format_24"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_marginEnd="4dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_mode_camera"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="Image"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_camera_alt_24"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_marginStart="4dp" />
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </LinearLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/title_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -49,42 +94,25 @@
                     android:id="@+id/content_edit_text" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:gravity="top"
                     android:inputType="textMultiLine|textCapSentences" android:minLines="5" />
-            </com.google.android.material.textfield.TextInputLayout>            <!--
-            Input Mode Selection -->
-            <LinearLayout android:id="@+id/input_mode_selector" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:orientation="horizontal"
-                android:gravity="center_vertical" android:layout_marginTop="16dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="@string/input_mode_label" android:layout_marginEnd="8dp"
-                    style="@style/TextAppearance.Material3.LabelLarge" />
-                <!-- TODO: Replace with actual icons and potentially use ToggleButton or RadioGroup
-                for better state management -->
-                <ImageButton
-                    android:id="@+id/button_mode_type"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_text_format_24"
-                    android:contentDescription="@string/mode_type_desc"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:layout_marginEnd="8dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!-- Image Preview Container -->
+            <FrameLayout
+                android:id="@+id/image_preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="16dp">
 
-                <ImageButton
-                    android:id="@+id/button_mode_camera"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_camera_alt_24"
-                    android:contentDescription="@string/mode_camera_desc"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp" />
+                <ImageView
+                    android:id="@+id/image_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/image_preview_desc"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-            </LinearLayout>            <!--
-            Image Preview for OCR -->
-            <ImageView android:id="@+id/image_preview" android:layout_width="match_parent"
-                android:layout_height="200dp" android:layout_marginTop="16dp"
-                android:scaleType="centerInside" android:visibility="gone"
-                android:contentDescription="@string/image_preview_desc"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" tools:visibility="visible" />
+            </FrameLayout>
             <!-- tools:visibility for layout preview -->
 
 

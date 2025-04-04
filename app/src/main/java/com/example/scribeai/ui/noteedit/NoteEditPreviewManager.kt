@@ -13,7 +13,7 @@ class NoteEditPreviewManager(
 ) {
 
     fun showImagePreview(imageUri: Uri) {
-        binding.imagePreview.visibility = View.VISIBLE
+        binding.imagePreviewContainer.visibility = View.VISIBLE
         Glide.with(context)
                 .load(imageUri)
                 .placeholder(R.drawable.ic_image_placeholder)
@@ -22,9 +22,8 @@ class NoteEditPreviewManager(
     }
 
     fun hideImagePreview() {
-        binding.imagePreview.visibility = View.GONE
+        binding.imagePreviewContainer.visibility = View.GONE
         // Clear Glide resources when hiding to free up memory
-        // Context null check is redundant for non-nullable constructor parameter
         Glide.with(context).clear(binding.imagePreview)
     }
 
