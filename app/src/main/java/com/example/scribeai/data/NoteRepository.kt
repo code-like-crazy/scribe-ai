@@ -1,13 +1,11 @@
-
-
 package com.example.scribeai.data
 
-import com.example.scribeai.data.Note
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
- * Repository module for handling data operations.
- * Abstracts the data sources (e.g., Room database) from the rest of the app.
+ * Repository module for handling data operations. Abstracts the data sources (e.g., Room database)
+ * from the rest of the app.
  */
 class NoteRepository(private val noteDao: NoteDao) {
 
@@ -16,7 +14,7 @@ class NoteRepository(private val noteDao: NoteDao) {
 
     // Suspending function to insert a note (runs on a background thread)
     suspend fun insert(note: Note): Long {
-       return noteDao.insert(note)
+        return noteDao.insert(note)
     }
 
     // Suspending function to update a note
@@ -43,11 +41,28 @@ class NoteRepository(private val noteDao: NoteDao) {
 
     // Function to get notes by tag (returns a Flow)
     fun getNotesByTag(tag: String): Flow<List<Note>> {
-        return noteDao.getNotesByTag(tag) // DAO handles wildcard internally if needed, or adjust here
+        return noteDao.getNotesByTag(
+                tag
+        ) // DAO handles wildcard internally if needed, or adjust here
     }
 
-     // Function to get notes by type (returns a Flow)
+    // Function to get notes by type (returns a Flow)
     fun getNotesByType(noteType: NoteType): Flow<List<Note>> {
         return noteDao.getNotesByType(noteType)
+    }
+
+    // Function to get all unique tags (returns a Flow)
+    fun getAllTags(): Flow<List<String>> {
+        // 1. Get the Flow<List<String>> where each String is like "tag1,tag2", "tag3", etc.
+        return noteDao.getAllTags().map { tagStringsList ->
+            // 2. Process the list of tag strings
+            tagStringsList
+                    .flatMap { tagsString ->
+                        // Split each string by comma (or your delimiter), trim whitespace
+                        tagsString.split(',').map { it.trim() }
+                    }
+                    .filter { it.isNotBlank() } // Remove empty tags
+                    .distinct() // Get unique tags
+        }
     }
 }

@@ -14,6 +14,8 @@
     <string name="error_empty_title">Title cannot be empty</string> <!-- Added -->
     <string name="error_empty_note">Note cannot be empty. Add a title or image/drawing.</string> <!--
     Updated error message -->
+    <string name="error_empty_note_content_or_image">Note must have content or an image.</string> <!--
+    Added for validation -->
     <string name="error_empty_tag">Tag cannot be empty</string> <!-- Added -->
     <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
     <string name="search_notes_hint">Search notes...</string>    <!-- Renamed from search_hint -->
@@ -30,13 +32,14 @@
     <string name="empty_state_message">No notes yet! Tap the + button to create one.</string> <!--
     Renamed and updated -->
     <string name="add_first_note">Add your first note</string>
-    <string name="note_author_placeholder">By Placeholder Author</string> <!-- Placeholder for note
+    <string name="note_author_placeholder">By Araf</string> <!-- Placeholder for note
     item -->
 
     <!-- Note Preview Screen -->
     <string name="note_preview_title">Note Preview</string>
     <string name="edit_note">Edit Note</string>
     <string name="delete_note">Delete Note</string>
+    <string name="share_note">Share Note</string> <!-- Added for share button content description -->
     <string name="error_loading_note">Error loading note</string>
     <string name="error_invalid_note_id">Invalid note ID</string>
     <string name="delete_note_not_implemented">Delete functionality not yet implemented.</string>

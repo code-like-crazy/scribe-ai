@@ -9,7 +9,7 @@ package com.example.scribeai.ui.noteedit
 // Removed Gemini imports, now handled by NoteEditGeminiProcessor
 // Removed Chip import, now handled by NoteEditTagManager
 // Removed IOException and kotlinx.coroutines.launch, now handled elsewhere
-import android.app.Activity // Re-added import
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +21,10 @@ import com.example.scribeai.R
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import java.io.File // Needed for file operations
+import java.io.FileOutputStream // Needed for file operations
+import java.io.InputStream // Needed for file operations
+import java.util.UUID // For unique filenames
 
 // all coroutines
 
@@ -142,14 +146,48 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
 
     // Tag Management UI methods removed (setupTagInput, addTagFromInput, updateTagChips)
 
+    // --- Image Copying ---
+    private fun copyImageToInternalStorage(sourceUri: Uri): Uri? {
+        return try {
+            val inputStream: InputStream? = contentResolver.openInputStream(sourceUri)
+            // Create a unique filename
+            val fileName = "IMG_${UUID.randomUUID()}.jpg"
+            // Get the app's internal files directory for note images
+            val internalDir = File(filesDir, "note_images")
+            if (!internalDir.exists()) {
+                internalDir.mkdirs() // Create the directory if it doesn't exist
+            }
+            val outputFile = File(internalDir, fileName)
+            val outputStream = FileOutputStream(outputFile)
+
+            inputStream?.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output) // Copy data
+                }
+            }
+            // Return the File URI of the copied image
+            Uri.fromFile(outputFile)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error copying image to internal storage", e)
+            showErrorToast("Failed to save image attachment.")
+            null // Return null if copying failed
+        }
+    }
+
     // --- NoteEditResultCallback Implementation ---
 
     override fun onImageResult(uri: Uri) {
-        viewModel.setSelectedImageUri(uri)
-        previewManager.showImagePreview(uri)
-        uiManager.showCameraMode()
-        // Trigger OCR via the processor
-        geminiProcessor.processImageForOcr(uri)
+        val internalUri = copyImageToInternalStorage(uri) // Copy the image first
+        if (internalUri != null) {
+            viewModel.setSelectedImageUri(internalUri) // Use the internal URI
+            previewManager.showImagePreview(internalUri)
+            uiManager.showCameraMode()
+            // Trigger OCR via the processor using the internal copy
+            geminiProcessor.processImageForOcr(internalUri)
+        } else {
+            // Handle copy failure - revert to text mode or show error
+            onResultCancelledOrFailed(true) // Treat as cancellation/failure
+        }
     }
 
     override fun onDrawingResult(uri: Uri) {
@@ -221,7 +259,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
     private fun saveNoteAndFinish() {
         val title = binding.titleEditText.text.toString().trim()
         val content = binding.contentEditText.text.toString().trim()
-        val imageUri = viewModel.selectedImageUri.value
+        // val imageUri = viewModel.selectedImageUri.value // Don't need to read here
 
         // --- Validation ---
         // 1. Check if title is empty
@@ -233,12 +271,12 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
             binding.titleInputLayout.error = null // Clear error if title is not empty
         }
 
-        // 2. Check if both title and image are missing (existing check)
-        if (title.isEmpty() && imageUri == null
-        ) { // This check might be redundant now but kept for safety
+        // 2. Check if both content and image are missing (title is already checked)
+        if (content.isEmpty() && viewModel.selectedImageUri.value == null) {
             com.google.android.material.snackbar.Snackbar.make(
                             binding.root,
-                            R.string.error_empty_note,
+                            R.string.error_empty_note_content_or_image, // Use a more specific
+                            // string if available
                             com.google.android.material.snackbar.Snackbar.LENGTH_LONG
                     )
                     .setAction(R.string.action_discard) {
@@ -249,11 +287,14 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
             return
         }
 
-        // Update the ViewModel's selected image URI before saving
-        viewModel.setSelectedImageUri(imageUri)
-        // Save the note
+        // Update the ViewModel's selected image URI before saving - REMOVED REDUNDANT CALL
+        // viewModel.setSelectedImageUri(imageUri)
+        // Save the note - ViewModel already has the correct internal URI
         viewModel.saveNote(title, content)
-        Log.d(TAG, "Note save requested. Title: '$title', Content: '$content', ImageUri: $imageUri")
+        Log.d(
+                TAG,
+                "Note save requested. Title: '$title', Content: '$content', ImageUri: ${viewModel.selectedImageUri.value}"
+        )
 
         Toast.makeText(this, R.string.note_saved_confirmation, Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK)

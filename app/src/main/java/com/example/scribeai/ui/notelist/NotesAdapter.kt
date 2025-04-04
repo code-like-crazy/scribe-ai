@@ -28,7 +28,7 @@ class NotesAdapter(
             private val dateFormat: SimpleDateFormat
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(note: Note, onItemClicked: (Note) -> Unit, onDeleteClicked: (Note) -> Unit) {
+        fun bind(note: Note, onItemClicked: (Note) -> Unit) {
             binding.textViewNoteTitle.text =
                     note.title.ifBlank {
                         itemView.context.getString(R.string.title_new_note)
@@ -40,9 +40,6 @@ class NotesAdapter(
 
             // Set click listener for the entire item view
             binding.root.setOnClickListener { onItemClicked(note) }
-
-            // Set click listener for the delete button
-            binding.buttonDeleteNote.setOnClickListener { onDeleteClicked(note) }
         }
     }
 
@@ -57,7 +54,7 @@ class NotesAdapter(
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentNote = getItem(position)
         // Pass both click listeners to the bind method
-        holder.bind(currentNote, onItemClicked, onDeleteClicked)
+        holder.bind(currentNote, onItemClicked)
     }
 
     /** DiffUtil.ItemCallback implementation to efficiently calculate list updates. */

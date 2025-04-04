@@ -69,6 +69,25 @@
                     android:fontFamily="@font/funnel_display" android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/textViewShowFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show filters"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/primary_foreground"
+                android:alpha="0.9"
+                android:padding="4dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/searchCardView"
+                app:layout_constraintStart_toStartOf="parent"
+                android:drawableStart="@drawable/ic_filter_24"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/primary_foreground"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.AppBarLayout>

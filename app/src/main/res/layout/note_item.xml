@@ -29,7 +29,7 @@
             android:ellipsize="end"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonDeleteNote"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             android:layout_marginEnd="8dp"
             tools:text="Example Note Title That Might Be Long" />
@@ -60,7 +60,7 @@
             app:layout_constraintTop_toBottomOf="@id/textViewNoteContentSnippet"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="By Placeholder Author" />
+            tools:text="By Araf" />
 
         <TextView
             android:id="@+id/textViewNoteDate"
@@ -73,20 +73,6 @@
             app:layout_constraintBottom_toBottomOf="@id/textViewNoteAuthor"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Apr 4, 2025" />
-
-        <ImageButton
-            android:id="@+id/buttonDeleteNote"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_delete_24"
-            app:tint="@color/destructive"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete_note"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/textViewNoteContentSnippet"
-            android:layout_marginEnd="-4dp"
-            android:padding="8dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

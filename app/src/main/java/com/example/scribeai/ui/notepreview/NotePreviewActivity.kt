@@ -19,6 +19,7 @@ import com.example.scribeai.databinding.ActivityNotePreviewBinding
 import com.example.scribeai.ui.noteedit.NoteEditActivity
 import com.example.scribeai.ui.noteedit.NoteEditViewModel
 import com.example.scribeai.ui.noteedit.NoteEditViewModelFactory
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import io.noties.markwon.Markwon
 import io.noties.markwon.linkify.LinkifyPlugin
@@ -85,6 +86,7 @@ class NotePreviewActivity : AppCompatActivity() {
         }
 
         binding.buttonDeleteNote.setOnClickListener { showDeleteConfirmationDialog() }
+        binding.buttonShareNote.setOnClickListener { showShareDialog() }
     }
 
     private fun setupToolbar() {
@@ -174,6 +176,28 @@ class NotePreviewActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK) // Signal MainActivity that something might have changed
             finish()
         }
+    }
+
+    private fun showShareDialog() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_share_note, null)
+        dialog.setContentView(view)
+
+        // Handle share options clicks (these won't actually share, just close the dialog)
+        view.findViewById<View>(R.id.option_copy_link).setOnClickListener {
+            Toast.makeText(this, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        view.findViewById<View>(R.id.option_share_pdf).setOnClickListener {
+            Toast.makeText(this, "PDF sharing not implemented", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        view.findViewById<View>(R.id.option_share_text).setOnClickListener {
+            Toast.makeText(this, "Text sharing not implemented", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     companion object {

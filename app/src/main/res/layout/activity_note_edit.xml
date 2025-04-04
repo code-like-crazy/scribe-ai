@@ -69,9 +69,8 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Text"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:backgroundTint="@color/border"
                     android:textColor="@color/primary"
-                    app:strokeColor="@color/border"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_text_format_24"
                     app:iconTint="@color/primary"
@@ -83,9 +82,8 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Image"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:backgroundTint="@color/border"
                     android:textColor="@color/primary"
-                    app:strokeColor="@color/border"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_camera_alt_24"
                     app:iconTint="@color/primary" />
@@ -103,12 +101,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/title_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:boxStrokeColor="@color/border"
-                app:hintTextColor="@color/muted_foreground">
+                app:hintEnabled="false">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/title_edit_text"
                     android:layout_width="match_parent"
@@ -130,12 +128,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/content_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:boxStrokeColor="@color/border"
-                app:hintTextColor="@color/muted_foreground">
+                app:hintEnabled="false">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/content_edit_text"
                     android:layout_width="match_parent"
@@ -181,13 +179,12 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tag_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Add a tag"
                     app:boxStrokeColor="@color/border"
-                    app:hintTextColor="@color/muted_foreground"
+                    app:hintEnabled="false"
                     android:layout_marginEnd="8dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tag_edit_text"
@@ -196,17 +193,17 @@
                         android:inputType="text"
                         android:imeOptions="actionDone"
                         android:maxLines="1"
+                        android:hint="Add a tag"
                         android:textColor="@color/primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_add_tag"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Add"
                     android:textColor="@color/primary"
-                    app:strokeColor="@color/border"
+                    android:backgroundTint="@color/border"
                     app:cornerRadius="8dp" />
             </LinearLayout>
 

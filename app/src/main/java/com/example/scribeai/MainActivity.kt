@@ -17,7 +17,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.scribeai.data.AppDatabase
 import com.example.scribeai.data.Note
 import com.example.scribeai.data.NoteRepository
@@ -27,7 +29,10 @@ import com.example.scribeai.ui.notelist.NoteListViewModel
 import com.example.scribeai.ui.notelist.NoteListViewModelFactory
 import com.example.scribeai.ui.notelist.NotesAdapter
 import com.example.scribeai.ui.notepreview.NotePreviewActivity
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     // Adapter instance
     private lateinit var notesAdapter: NotesAdapter
+    private var selectedFilterTags = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +70,9 @@ class MainActivity : AppCompatActivity() {
 
         // Setup focus clearing for search
         setupFocusClearing()
+
+        // Setup filter button click listener
+        setupFilterButton()
     }
 
     private fun setupSearchView() {
@@ -93,17 +102,30 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 noteListViewModel.notes.collect { notesList ->
-                    // Submit the updated list to the ListAdapter
-                    notesAdapter.submitList(notesList)
-                    Log.d("MainActivity", "Notes observed: ${notesList.size}")
+                    // Apply tag filter locally
+                    val filteredList =
+                            if (selectedFilterTags.isEmpty()) {
+                                notesList
+                            } else {
+                                notesList.filter { note ->
+                                    note.tags.any { tag -> selectedFilterTags.contains(tag) }
+                                }
+                            }
+
+                    // Submit the filtered list to the ListAdapter
+                    notesAdapter.submitList(filteredList)
+                    Log.d(
+                            "MainActivity",
+                            "Notes observed: ${notesList.size}, Filtered: ${filteredList.size}"
+                    )
 
                     // Update section title with count
                     binding.textViewSectionTitleNotes.text =
-                            getString(R.string.section_title_notes_with_count, notesList.size)
+                            getString(R.string.section_title_notes_with_count, filteredList.size)
 
                     // Toggle empty state visibility using the new layout IDs
-                    binding.recyclerViewNotes.isVisible = notesList.isNotEmpty()
-                    binding.textViewEmptyState.isVisible = notesList.isEmpty()
+                    binding.recyclerViewNotes.isVisible = filteredList.isNotEmpty()
+                    binding.textViewEmptyState.isVisible = filteredList.isEmpty()
                 }
             }
         }
@@ -138,7 +160,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // Initialize adapter with both click listeners
+        // Initialize adapter with click listener
         notesAdapter =
                 NotesAdapter(
                         onItemClicked = { note ->
@@ -151,10 +173,104 @@ class MainActivity : AppCompatActivity() {
                         }
                 )
 
-        binding.recyclerViewNotes.apply { // Use the correct RecyclerView ID
+        binding.recyclerViewNotes.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = notesAdapter
+
+            // Setup swipe-to-delete
+            ItemTouchHelper(
+                            object :
+                                    ItemTouchHelper.SimpleCallback(
+                                            0, // No drag and drop
+                                            ItemTouchHelper.LEFT // Only enable left swipe
+                                    ) {
+                                override fun onMove(
+                                        recyclerView: RecyclerView,
+                                        viewHolder: RecyclerView.ViewHolder,
+                                        target: RecyclerView.ViewHolder
+                                ): Boolean = false // Disable drag and drop
+
+                                override fun onSwiped(
+                                        viewHolder: RecyclerView.ViewHolder,
+                                        direction: Int
+                                ) {
+                                    val position = viewHolder.adapterPosition
+                                    val note = notesAdapter.currentList[position]
+                                    // Reset the item position (to prevent visual glitch)
+                                    notesAdapter.notifyItemChanged(position)
+                                    // Show delete confirmation
+                                    showDeleteConfirmationDialog(note)
+                                }
+                            }
+                    )
+                    .attachToRecyclerView(this)
         }
+    }
+
+    private fun setupFilterButton() {
+        binding.textViewShowFilters.setOnClickListener { showFilterDialog() }
+    }
+
+    private fun showFilterDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_filter_notes, null)
+        val chipGroup = dialogView.findViewById<ChipGroup>(R.id.chipGroupTags)
+        val buttonClear = dialogView.findViewById<View>(R.id.buttonClearFilters)
+        val buttonApply = dialogView.findViewById<View>(R.id.buttonApplyFilters)
+
+        val dialog =
+                AlertDialog.Builder(this)
+                        .setView(dialogView) // Use the correct overload
+                        .create()
+
+        // Populate tags within a coroutine scope
+        lifecycleScope.launch {
+            // Ensure Flow collection happens on the main thread if UI updates are needed
+            // immediately
+            // but fetching tags should be fine here.
+            val allTags = noteListViewModel.getAllTags().first() // Collect the first emission
+            chipGroup.removeAllViews() // Clear existing chips before adding new ones
+            allTags.forEach { tag: String -> // Explicitly type the loop variable
+                val chip =
+                        Chip(this@MainActivity).apply {
+                            text = tag
+                            isCheckable = true
+                            isChecked = selectedFilterTags.contains(tag)
+                            // Add styling as needed (e.g., background, text color)
+                            // setChipBackgroundColorResource(R.color.chip_background_selector)
+                            // setTextColorResource(R.color.chip_text_selector)
+                        }
+                chipGroup.addView(chip)
+            }
+        }
+
+        buttonClear.setOnClickListener {
+            selectedFilterTags.clear()
+            chipGroup.clearCheck()
+            // Re-collecting the flow is needed to update the UI with cleared filters
+            // Calling observeNotes() directly might not re-trigger collection properly.
+            // Instead, rely on the existing observer reacting to state changes if possible,
+            // or manage filter state in ViewModel for better reactivity.
+            // For simplicity here, we'll just clear the set and let the existing observer run.
+            // Trigger the main observer to re-filter the list
+            triggerNotesUpdate()
+            dialog.dismiss()
+        }
+
+        buttonApply.setOnClickListener {
+            selectedFilterTags.clear()
+            val checkedIds = chipGroup.checkedChipIds // Get list of checked chip IDs
+            checkedIds.forEach { chipId: Int -> // Explicitly type the loop variable
+                val chip = chipGroup.findViewById<Chip>(chipId)
+                if (chip != null) { // Check if chip is found
+                    selectedFilterTags.add(chip.text.toString())
+                }
+            }
+            // Trigger the main observer to re-filter the list
+            triggerNotesUpdate()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun setupFocusClearing() {
@@ -190,6 +306,17 @@ class MainActivity : AppCompatActivity() {
                 }
                 .setNegativeButton(R.string.action_cancel, null) // Just dismiss the dialog
                 .show()
+    }
+
+    // Helper function to manually trigger notes update/re-collection
+    private fun triggerNotesUpdate() {
+        // This is a simplified way to hint that the data might need refreshing.
+        // A more robust solution involves managing filter state in the ViewModel.
+        lifecycleScope.launch {
+            // Re-collect the latest notes based on current search/filter state
+            noteListViewModel.notes.first()
+            // The observer should handle submitting the list
+        }
     }
 
     // Remove the deprecated onActivityResult as list updates are handled by the observer
