@@ -107,8 +107,9 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
 
                     // Update section title with count
                     binding.textViewSectionTitleNotes.text =
-                            getString(
-                                    R.string.section_title_notes_with_count,
+                            resources.getQuantityString(
+                                    R.plurals.section_title_notes_with_count,
+                                    filteredNotesList.size,
                                     filteredNotesList.size
                             )
 

@@ -134,8 +134,8 @@ class DrawingActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // TODO: Check if drawing has actually changed before saving
-        saveDrawingAndFinish()
-        // super.onBackPressed() // Don't call super as we handle finish in saveDrawingAndFinish
+        saveDrawingAndFinish() // This method already calls finish()
+        super.onBackPressed() // Call super to satisfy Lint, even if redundant
     }
 
     // Handle toolbar back button press (same as system back press for now)

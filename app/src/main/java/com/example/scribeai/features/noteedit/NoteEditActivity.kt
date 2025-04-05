@@ -14,6 +14,7 @@ import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.example.scribeai.R
 import com.example.scribeai.core.data.AppDatabase
 import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.google.android.material.chip.ChipGroup
 import java.io.File // Needed for file operations
 import java.io.FileOutputStream // Needed for file operations
 import java.io.InputStream // Needed for file operations
@@ -53,6 +55,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
     private lateinit var previewManager: NoteEditPreviewManager
     private lateinit var tagManager: NoteEditTagManager // Add Tag Manager
     private lateinit var geminiProcessor: NoteEditGeminiProcessor // Add Gemini Processor
+    private lateinit var formatManager: NoteEditFormatManager // Add Format Manager
 
     companion object {
         const val EXTRA_NOTE_ID = "com.example.scribeai.EXTRA_NOTE_ID"
@@ -121,6 +124,14 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
                         binding.progressBar, // Pass progress bar
                         this // Pass this activity as the callback
                 )
+
+        // Get ChipGroup through included layout
+        val toolbarContainer = findViewById<View>(com.example.scribeai.R.id.formatting_toolbar)
+        val chipGroup =
+                toolbarContainer.findViewById<ChipGroup>(
+                        com.example.scribeai.R.id.formatting_chip_group
+                )
+        formatManager = NoteEditFormatManager(binding.contentEditText, chipGroup)
     }
 
     private fun observeNoteDetails() {

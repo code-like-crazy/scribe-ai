@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Format Toolbar IDs -->
+    <item name="format_chip_bold" type="id" />
+    <item name="format_chip_italic" type="id" />
+    <item name="format_chip_h1" type="id" />
+    <item name="format_chip_list" type="id" />
+    <item name="formatting_chip_group" type="id" />
+</resources>

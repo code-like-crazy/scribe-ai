@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/secondary"
+    android:scrollbars="none">
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/formatting_chip_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:singleLine="true"
+        app:singleSelection="false">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/format_chip_bold"
+            style="@style/Widget.Material3.Chip.Suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipIcon="@drawable/ic_format_bold_24"
+            android:checkable="true"
+            android:text="Bold" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/format_chip_italic"
+            style="@style/Widget.Material3.Chip.Suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipIcon="@drawable/ic_format_italic_24"
+            android:checkable="true"
+            android:text="Italic" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/format_chip_h1"
+            style="@style/Widget.Material3.Chip.Suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipIcon="@drawable/ic_format_h1_24"
+            android:checkable="true"
+            android:text="H1" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/format_chip_list"
+            style="@style/Widget.Material3.Chip.Suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipIcon="@drawable/ic_format_list_bulleted_24"
+            android:checkable="true"
+            android:text="List" />
+
+    </com.google.android.material.chip.ChipGroup>
+</HorizontalScrollView>

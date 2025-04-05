@@ -1,62 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">ScribeAI</string>
-    <string name="hero_subtitle">Capture, organize, and find your notes effortlessly.</string>
-    <string name="add_new_note">Add New Note</string>    <!-- Content description for FAB -->
-    <string name="section_title_notes">Your Notes</string>
-    <string name="section_title_notes_with_count">Your Notes (%d)</string> <!-- New formatted string -->
 
-    <!-- Note Edit Screen -->
-    <string name="title_new_note">New Note</string>
-    <string name="title_edit_note">Edit Note</string>
-    <string name="note_title_hint">Title</string>
-    <string name="note_content_hint">Content</string>
+    <!-- Actions -->
     <string name="action_save">Save</string>
-    <string name="error_empty_title">Title cannot be empty</string> <!-- Added -->
-    <string name="error_empty_note">Note cannot be empty. Add a title or image/drawing.</string> <!--
-    Updated error message -->
-    <string name="error_empty_note_content_or_image">Note must have content or an image.</string> <!--
-    Added for validation -->
-    <string name="error_empty_tag">Tag cannot be empty</string> <!-- Added -->
-    <string name="note_saved_confirmation">Note saved</string>    <!-- Added confirmation message -->
-    <string name="search_notes_hint">Search notes...</string>    <!-- Renamed from search_hint -->
-    <string name="action_discard">Discard</string> <!-- Added for Snackbar action -->
-
-    <!-- Input Mode Selection -->
-    <string name="input_mode_label">Input Mode:</string>
-    <string name="mode_type_desc">Type Text</string>
-    <string name="mode_draw_desc">Draw Note</string>
-    <string name="mode_camera_desc">Use Camera/Image</string>
-    <string name="image_preview_desc">Image Preview</string>    <!-- Added for ImageView -->
-
-    <!-- Empty State -->
-    <string name="empty_state_message">No notes yet! Tap the + button to create one.</string> <!--
-    Renamed and updated -->
-    <string name="add_first_note">Add your first note</string>
-    <string name="note_author_placeholder">By Araf</string> <!-- Placeholder for note
-    item -->
-
-    <!-- Note Preview Screen -->
-    <string name="note_preview_title">Note Preview</string>
+    <string name="action_discard">Discard</string>
+    <string name="add_new_note">Add New Note</string>
+    <string name="share_note">Share Note</string>
     <string name="edit_note">Edit Note</string>
     <string name="delete_note">Delete Note</string>
-    <string name="share_note">Share Note</string> <!-- Added for share button content description -->
-    <string name="error_loading_note">Error loading note</string>
-    <string name="error_invalid_note_id">Invalid note ID</string>
-    <string name="delete_note_not_implemented">Delete functionality not yet implemented.</string>
-
-    <!-- Delete Confirmation Dialog -->
-    <string name="delete_confirmation_title">Delete Note?</string>
-    <string name="delete_confirmation_message">Are you sure you want to delete this note
-        permanently?</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
+
+    <!-- Titles -->
+    <string name="title_new_note">New Note</string>
+    <string name="title_edit_note">Edit Note</string>
+    <string name="note_preview_title">Note Preview</string>
+
+    <!-- Hints -->
+    <string name="note_title_hint">Enter note title</string>
+    <string name="note_content_hint">Start typing your note...</string>
+    <string name="search_notes_hint">Search notes...</string>
+    <string name="note_author_placeholder">Author</string>
+
+    <!-- Errors -->
+    <string name="error_empty_title">Title cannot be empty</string>
+    <string name="error_empty_note_content_or_image">Note must have content or an image</string>
+    <string name="error_empty_tag">Tag cannot be empty</string>
+    <string name="error_loading_note">Error loading note</string>
+    <string name="error_invalid_note_id">Invalid note ID</string>
+
+    <!-- Confirmations -->
+    <string name="note_saved_confirmation">Note saved successfully</string>
     <string name="note_deleted_confirmation">Note deleted</string>
 
-    <!-- Image Source Selection Dialog -->
-    <string name="dialog_title_select_image_source">Select Image Source</string>
+    <!-- Dialogs -->
+    <string name="delete_confirmation_title">Confirm Deletion</string>
+    <string name="delete_confirmation_message">Are you sure you want to delete this note?</string>
     <string name="dialog_option_camera">Camera</string>
     <string name="dialog_option_gallery">Gallery</string>
-    <string name="drawing_preview_desc">Drawing Preview</string> <!-- Added for drawing preview
-    ImageView -->
+    <string name="dialog_title_select_image_source">Select Image Source</string>
 
+    <!-- Content Descriptions -->
+    <string name="image_preview_desc">Note image preview</string>
+
+    <!-- UI Messages -->
+    <string name="hero_subtitle">Capture your thoughts, effortlessly.</string>
+    <string name="empty_state_message">No notes yet. Tap the + button to create one!</string>
+
+    <!-- Plurals -->
+    <plurals name="section_title_notes_with_count">
+        <item quantity="one">%d Note</item>
+        <item quantity="other">%d Notes</item>
+    </plurals>
+
+    <!-- Format Toolbar IDs -->
+    <string name="chip_bold">Bold</string>
+    <string name="chip_italic">Italic</string>
+    <string name="chip_h1">Heading 1</string>
+    <string name="chip_list">List</string>
 </resources>

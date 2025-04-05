@@ -126,6 +126,14 @@
                 android:textColor="@color/muted_foreground"
                 android:layout_marginBottom="8dp" />
 
+            <!-- Formatting Toolbar -->
+            <include
+                android:id="@+id/formatting_toolbar"
+                layout="@layout/layout_format_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/content_input_layout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
