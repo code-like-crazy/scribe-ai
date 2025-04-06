@@ -34,7 +34,19 @@ class NoteEditFormatManager(
             }
 
             // H1
-            chipGroup.findViewById<Chip>(R.id.format_chip_h1)?.setOnClickListener { applyHeading() }
+            chipGroup.findViewById<Chip>(R.id.format_chip_h1)?.setOnClickListener {
+                applyHeading("# ")
+            }
+
+            // H2 (New)
+            chipGroup.findViewById<Chip>(R.id.format_chip_h2)?.setOnClickListener {
+                applyHeading("## ")
+            }
+
+            // H3 (New)
+            chipGroup.findViewById<Chip>(R.id.format_chip_h3)?.setOnClickListener {
+                applyHeading("### ")
+            }
 
             // List
             chipGroup.findViewById<Chip>(R.id.format_chip_list)?.setOnClickListener { applyList() }
@@ -84,87 +96,106 @@ class NoteEditFormatManager(
                     text.substring(0, start) + marker + selectedText + marker + text.substring(end)
                 }
 
-        updateText(newText, start, end, marker.length)
+        // For bold/italic, place cursor between markers if no selection, or after the selection +
+        // markers
+        val newCursorPos =
+                if (start == end) {
+                    start + marker.length // Place cursor between markers
+                } else {
+                    end + (marker.length * 2) // Place cursor after the end marker
+                }
+        updateText(newText, newCursorPos) // Call the corrected updateText
     }
 
-    private fun applyHeading() {
+    private fun applyHeading(headingMarker: String) {
         val text = contentEditText.text.toString()
-        val start = contentEditText.selectionStart.coerceAtLeast(0)
+        val originalCursorPos = contentEditText.selectionStart.coerceAtLeast(0)
 
         // Find the start of the current line
-        var lineStart = start
+        var lineStart = originalCursorPos // Use originalCursorPos to find the line start
         while (lineStart > 0 && text[lineStart - 1] != '\n') {
             lineStart--
         }
+        val lineEnd = (text.indexOf('\n', lineStart)).takeIf { it != -1 } ?: text.length
+        val currentLineContent = text.substring(lineStart, lineEnd)
 
-        // Check if line already starts with #
-        val currentLine =
-                text.substring(
-                        lineStart,
-                        (text.indexOf('\n', lineStart)).takeIf { it != -1 } ?: text.length
-                )
+        // Determine if we are adding or removing the heading
+        val isAdding = !currentLineContent.trimStart().startsWith(headingMarker)
+        var newCursorOffset = 0
+
         val newText =
-                if (currentLine.trimStart().startsWith("# ")) {
-                    // Remove heading
+                if (isAdding) {
+                    // Add heading marker
+                    newCursorOffset = headingMarker.length
                     text.substring(0, lineStart) +
-                            currentLine.replaceFirst("# ", "") +
-                            text.substring(lineStart + currentLine.length)
+                            headingMarker +
+                            currentLineContent +
+                            text.substring(lineEnd)
                 } else {
-                    // Add heading
+                    // Remove heading marker (handle potential multiple #s)
+                    val trimmedLine = currentLineContent.trimStart()
+                    val markerToRemove = trimmedLine.takeWhile { it == '#' } + " "
+                    newCursorOffset = -markerToRemove.length
                     text.substring(0, lineStart) +
-                            "# " +
-                            currentLine +
-                            text.substring(lineStart + currentLine.length)
+                            currentLineContent.replaceFirst(markerToRemove, "") +
+                            text.substring(lineEnd)
                 }
 
-        updateText(newText, start, start, 0)
+        // Calculate new cursor position relative to the original position within the line
+        val cursorLineOffset = originalCursorPos - lineStart // This calculation should be fine now
+        val newCursorPos = (lineStart + cursorLineOffset + newCursorOffset).coerceAtLeast(lineStart)
+
+        updateText(newText, newCursorPos) // Call the corrected updateText
     }
 
+    // applyList was missing its definition in the previous merge
     private fun applyList() {
         val text = contentEditText.text.toString()
-        val start = contentEditText.selectionStart.coerceAtLeast(0)
+        val originalCursorPos = contentEditText.selectionStart.coerceAtLeast(0)
 
         // Find the start of the current line
-        var lineStart = start
+        var lineStart = originalCursorPos // Use originalCursorPos to find the line start
         while (lineStart > 0 && text[lineStart - 1] != '\n') {
             lineStart--
         }
+        val lineEnd = (text.indexOf('\n', lineStart)).takeIf { it != -1 } ?: text.length
+        val currentLineContent = text.substring(lineStart, lineEnd)
+        val listMarker = "- "
+        var newCursorOffset = 0
 
-        // Check if line already starts with -
-        val currentLine =
-                text.substring(
-                        lineStart,
-                        (text.indexOf('\n', lineStart)).takeIf { it != -1 } ?: text.length
-                )
         val newText =
-                if (currentLine.trimStart().startsWith("- ")) {
+                if (currentLineContent.trimStart().startsWith(listMarker)) {
                     // Remove list marker
+                    newCursorOffset = -listMarker.length
                     text.substring(0, lineStart) +
-                            currentLine.replaceFirst("- ", "") +
-                            text.substring(lineStart + currentLine.length)
+                            currentLineContent.replaceFirst(listMarker, "") +
+                            text.substring(lineEnd)
                 } else {
-                    // Add list marker
+                    // Add list marker at the beginning of the line
+                    newCursorOffset = listMarker.length
                     text.substring(0, lineStart) +
-                            "- " +
-                            currentLine +
-                            text.substring(lineStart + currentLine.length)
+                            listMarker +
+                            currentLineContent +
+                            text.substring(lineEnd)
                 }
 
-        updateText(newText, start, start, 0)
+        // Calculate new cursor position relative to the original position within the line
+        val cursorLineOffset = originalCursorPos - lineStart // This calculation should be fine now
+        val newCursorPos = (lineStart + cursorLineOffset + newCursorOffset).coerceAtLeast(lineStart)
+
+        updateText(newText, newCursorPos) // Call the corrected updateText
     }
 
-    private fun updateText(newText: String, start: Int, end: Int, markerLength: Int) {
+    // Simplified updateText, takes only the new text and desired cursor position
+    // Removed erroneous 'private' modifiers from previous merge attempt
+    private fun updateText(newText: String, newCursorPosition: Int) {
         isUpdatingText = true
+        val currentScrollY = contentEditText.scrollY // Preserve scroll position
         contentEditText.setText(newText)
-
-        // Restore selection or place cursor appropriately
-        if (start == end) {
-            // No selection, place cursor between markers
-            contentEditText.setSelection(start + markerLength)
-        } else {
-            // Restore selection including markers
-            contentEditText.setSelection(start, end + (markerLength * 2))
-        }
+        // Ensure cursor position is valid
+        val validCursorPos = newCursorPosition.coerceIn(0, newText.length)
+        contentEditText.setSelection(validCursorPos)
+        contentEditText.scrollTo(0, currentScrollY) // Restore scroll position
         isUpdatingText = false
     }
 }
