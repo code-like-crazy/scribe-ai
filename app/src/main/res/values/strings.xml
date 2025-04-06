@@ -40,7 +40,9 @@
     <string name="delete_confirmation_message">Are you sure you want to delete this note?</string>
     <string name="dialog_option_camera">Camera</string>
     <string name="dialog_option_gallery">Gallery</string>
-    <string name="dialog_title_select_image_source">Select Image Source</string>
+    <string name="dialog_title_image_input_mode">Image Input Mode</string>
+    <string name="dialog_message_image_input_mode">Use the camera or gallery to select an image of
+        handwritten notes. The app will extract the text and convert it to Markdown format.</string>
 
     <!-- Content Descriptions -->
     <string name="image_preview_desc">Note image preview</string>

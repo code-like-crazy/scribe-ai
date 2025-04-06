@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater // Import LayoutInflater
 import android.view.MotionEvent
 import android.view.View // Add View import for listener
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button // Import Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -192,22 +194,33 @@ class MainActivity : AppCompatActivity(), FilterNotesDialogFragment.FilterDialog
     }
 
     private fun showDeleteConfirmationDialog(note: Note) {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.delete_confirmation_title)
-                .setMessage(R.string.delete_confirmation_message)
-                .setPositiveButton(R.string.action_delete) { _, _ ->
-                    // Call ViewModel to delete the note
-                    noteListViewModel.deleteNote(note)
+        // Inflate the custom layout
+        val customView =
+                LayoutInflater.from(this).inflate(R.layout.dialog_delete_confirmation, null)
 
-                    Snackbar.make(
-                                    binding.root,
-                                    R.string.note_deleted_confirmation,
-                                    Snackbar.LENGTH_SHORT
-                            )
-                            .show()
-                }
-                .setNegativeButton(R.string.action_cancel, null)
-                .show()
+        // Create the dialog using the builder
+        val dialog =
+                AlertDialog.Builder(this)
+                        .setView(customView) // Set the custom view
+                        .create() // Create the dialog instance
+
+        // Find buttons inside the custom view and set listeners
+        val cancelButton = customView.findViewById<Button>(R.id.button_cancel)
+        val deleteButton = customView.findViewById<Button>(R.id.button_delete)
+
+        cancelButton.setOnClickListener {
+            dialog.dismiss() // User cancelled
+        }
+
+        deleteButton.setOnClickListener {
+            // User confirmed deletion
+            noteListViewModel.deleteNote(note)
+            Snackbar.make(binding.root, R.string.note_deleted_confirmation, Snackbar.LENGTH_SHORT)
+                    .show()
+            dialog.dismiss() // Dismiss the dialog
+        }
+
+        dialog.show() // Show the configured dialog
     }
 
     // Remove the triggerNotesUpdate function entirely

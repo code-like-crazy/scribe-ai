@@ -5,7 +5,9 @@ package com.example.scribeai.features.noteedit
 import android.content.Context
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.view.LayoutInflater // Import LayoutInflater
 import android.view.View
+import android.widget.Button // Import Button
 import androidx.appcompat.app.AlertDialog
 import com.example.scribeai.R
 import com.example.scribeai.databinding.ActivityNoteEditBinding
@@ -112,24 +114,48 @@ class NoteEditUIManager(
                                 context.getString(R.string.dialog_option_camera),
                                 context.getString(R.string.dialog_option_gallery)
                         )
-                AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.dialog_title_select_image_source))
-                        .setItems(options) { dialog, which ->
-                                when (which) {
-                                        0 -> launcher.launchCamera() // Delegate camera launch
-                                        1 -> launcher.launchGallery() // Delegate gallery launch
+
+                // Inflate the custom layout
+                val customView =
+                        LayoutInflater.from(context)
+                                .inflate(R.layout.dialog_image_source_content, null)
+
+                // Create the dialog using the builder
+                val dialog =
+                        AlertDialog.Builder(context)
+                                .setTitle(context.getString(R.string.dialog_title_image_input_mode))
+                                .setView(customView) // Set the custom view
+                                .setOnCancelListener {
+                                        // Handle cancellation same as before
+                                        if (viewModel.selectedImageUri.value == null) {
+                                                showTextMode()
+                                        }
                                 }
-                                dialog.dismiss() // Dismiss the dialog after selection
+                                .create() // Create the dialog instance
+
+                // Find buttons inside the custom view and set listeners
+                val cancelButton = customView.findViewById<Button>(R.id.dialog_button_cancel)
+                val cameraButton = customView.findViewById<Button>(R.id.dialog_button_camera)
+                val galleryButton = customView.findViewById<Button>(R.id.dialog_button_gallery)
+
+                cancelButton.setOnClickListener {
+                        // Handle cancellation same as setOnCancelListener
+                        if (viewModel.selectedImageUri.value == null) {
+                                showTextMode()
                         }
-                        .setOnCancelListener {
-                                // If the user cancels the dialog, and no image/drawing is currently
-                                // set,
-                                // revert to text mode to avoid staying in camera mode with nothing
-                                // to show.
-                                if (viewModel.selectedImageUri.value == null) {
-                                        showTextMode()
-                                }
-                        }
-                        .show()
+                        dialog.dismiss()
+                }
+
+                cameraButton.setOnClickListener {
+                        launcher.launchCamera()
+                        dialog.dismiss()
+                }
+
+                galleryButton.setOnClickListener {
+                        launcher.launchGallery()
+                        dialog.dismiss()
+                }
+
+                dialog.show() // Show the configured dialog
         }
 }

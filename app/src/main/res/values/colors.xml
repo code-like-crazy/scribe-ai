@@ -25,6 +25,7 @@
     <color name="destructive_foreground">#FAFAFA</color> <!-- Updated from #FFFFFF -->
     <color name="border">#E4E4E7</color>
     <color name="input">#E4E4E7</color>
+    <color name="input_background">#F4F4F5</color> <!-- Same as secondary for a subtle difference -->
     <color name="ring">#18181B</color> <!-- Updated from #020817 -->
 
     <!-- shadcn-inspired Neutral Colors (Dark) -->

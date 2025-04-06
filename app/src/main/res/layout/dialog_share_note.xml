@@ -14,102 +14,40 @@
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:layout_marginBottom="16dp" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/option_copy_link"
+    <!-- Using OutlinedButton style for better visual separation -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share_copy_link"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/border">
+        android:text="Copy Link"
+        android:textSize="16sp"
+        android:textColor="@color/primary"
+        app:strokeColor="@color/border"
+        app:cornerRadius="8dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_share_24"
-                app:tint="@color/primary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Copy Link"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/option_share_pdf"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share_pdf"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/border">
+        android:text="Share as PDF"
+        android:textSize="16sp"
+        android:textColor="@color/primary"
+        app:strokeColor="@color/border"
+        app:cornerRadius="8dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_share_24"
-                app:tint="@color/primary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Share as PDF"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/option_share_text"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share_text"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/border">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_share_24"
-                app:tint="@color/primary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Share as Text"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_height="56dp"
+        android:text="Share as Text"
+        android:textSize="16sp"
+        android:textColor="@color/primary"
+        app:strokeColor="@color/border"
+        app:cornerRadius="8dp" />
 
 </LinearLayout>

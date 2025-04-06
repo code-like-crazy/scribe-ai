@@ -7,7 +7,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater // Import LayoutInflater
 import android.view.View
+import android.widget.Button // Import Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -163,22 +165,34 @@ class NotePreviewActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmationDialog() {
         currentNote?.let { noteToDelete ->
-            AlertDialog.Builder(this)
-                    .setTitle(R.string.delete_confirmation_title)
-                    .setMessage(R.string.delete_confirmation_message)
-                    .setPositiveButton(R.string.action_delete) { _, _ ->
-                        // User confirmed deletion
-                        noteEditViewModel.deleteNote(noteToDelete)
-                        Toast.makeText(this, R.string.note_deleted_confirmation, Toast.LENGTH_SHORT)
-                                .show()
-                        setResult(Activity.RESULT_OK) // Signal MainActivity that something changed
-                        finish()
-                    }
-                    .setNegativeButton(R.string.action_cancel) { dialog, _ ->
-                        // User cancelled
-                        dialog.dismiss()
-                    }
-                    .show()
+            // Inflate the custom layout
+            val customView =
+                    LayoutInflater.from(this).inflate(R.layout.dialog_delete_confirmation, null)
+
+            // Create the dialog using the builder
+            val dialog =
+                    AlertDialog.Builder(this)
+                            .setView(customView) // Set the custom view
+                            .create() // Create the dialog instance
+
+            // Find buttons inside the custom view and set listeners
+            val cancelButton = customView.findViewById<Button>(R.id.button_cancel)
+            val deleteButton = customView.findViewById<Button>(R.id.button_delete)
+
+            cancelButton.setOnClickListener {
+                dialog.dismiss() // User cancelled
+            }
+
+            deleteButton.setOnClickListener {
+                // User confirmed deletion
+                noteEditViewModel.deleteNote(noteToDelete)
+                Toast.makeText(this, R.string.note_deleted_confirmation, Toast.LENGTH_SHORT).show()
+                setResult(Activity.RESULT_OK) // Signal MainActivity that something changed
+                dialog.dismiss() // Dismiss before finishing
+                finish()
+            }
+
+            dialog.show() // Show the configured dialog
         }
                 ?: run {
                     // Should not happen if the button is only enabled when note is loaded, but
@@ -205,16 +219,16 @@ class NotePreviewActivity : AppCompatActivity() {
         val view = layoutInflater.inflate(R.layout.dialog_share_note, null)
         dialog.setContentView(view)
 
-        // Handle share options clicks (these won't actually share, just close the dialog)
-        view.findViewById<View>(R.id.option_copy_link).setOnClickListener {
+        // Handle share options clicks using the new button IDs
+        view.findViewById<Button>(R.id.button_share_copy_link).setOnClickListener {
             Toast.makeText(this, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
-        view.findViewById<View>(R.id.option_share_pdf).setOnClickListener {
+        view.findViewById<Button>(R.id.button_share_pdf).setOnClickListener {
             Toast.makeText(this, "PDF sharing not implemented", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
-        view.findViewById<View>(R.id.option_share_text).setOnClickListener {
+        view.findViewById<Button>(R.id.button_share_text).setOnClickListener {
             Toast.makeText(this, "Text sharing not implemented", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }

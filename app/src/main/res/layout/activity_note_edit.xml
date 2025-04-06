@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/Theme.ScribeAI.AppBarOverlay"
-        android:background="@color/secondary"
+        android:background="@drawable/toolbar_border"
         android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -26,12 +26,6 @@
             app:navigationIconTint="@color/foreground"
             app:titleTextColor="@color/foreground"
             app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
-
-        <!-- Divider View -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/border" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -55,13 +49,14 @@
                 android:textColor="@color/muted_foreground"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Input Mode Selection -->
             <LinearLayout
                 android:id="@+id/input_mode_selector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/input_mode_background"
+                android:padding="12dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_mode_type"
@@ -114,7 +109,7 @@
                     android:hint="@string/note_title_hint"
                     android:inputType="textCapSentences"
                     android:textColor="@color/primary"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Content Field Label -->
@@ -126,7 +121,6 @@
                 android:textColor="@color/muted_foreground"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Formatting Toolbar -->
             <include
                 android:id="@+id/formatting_toolbar"
                 layout="@layout/layout_format_toolbar"
@@ -161,7 +155,6 @@
                 android:background="@color/border"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Tags Section Label -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -179,12 +172,12 @@
                 app:chipSpacingHorizontal="8dp"
                 app:chipSpacingVertical="4dp" />
 
-            <!-- Input for adding new tags -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="24dp"
+                android:gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tag_input_layout"
@@ -209,15 +202,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_add_tag"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="Add"
-                    android:textColor="@color/primary"
-                    android:backgroundTint="@color/border"
+                    android:textColor="@color/primary_foreground"
+                    android:backgroundTint="@color/primary"
                     app:cornerRadius="8dp" />
             </LinearLayout>
 
-
-            <!-- Image Preview -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/image_preview_container"
                 android:layout_width="match_parent"
@@ -238,7 +230,6 @@
                     android:contentDescription="@string/image_preview_desc"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-                <!-- Progress Bar for OCR/Gemini processing -->
                 <ProgressBar
                     android:id="@+id/progress_bar"
                     style="?android:attr/progressBarStyle"
