@@ -11,10 +11,10 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/hero_background_gradient"
+        android:elevation="0dp"
         android:fitsSystemWindows="true"
-        android:theme="@style/Theme.ScribeAI.AppBarOverlay"
-        android:background="@drawable/toolbar_border"
-        android:elevation="0dp">
+        android:theme="@style/Theme.ScribeAI.AppBarOverlay">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -23,9 +23,9 @@
             android:background="@android:color/transparent"
             android:elevation="0dp"
             app:navigationIcon="@drawable/ic_arrow_back_24"
-            app:navigationIconTint="@color/foreground"
-            app:titleTextColor="@color/foreground"
-            app:popupTheme="@style/Theme.ScribeAI.PopupOverlay" />
+            app:navigationIconTint="@color/secondary"
+            app:popupTheme="@style/Theme.ScribeAI.PopupOverlay"
+            app:titleTextColor="@color/secondary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -175,27 +175,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp"
-                android:gravity="center_vertical">
+                android:layout_marginBottom="48dp"
+                android:gravity="start"
+                android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tag_input_layout"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="0dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     app:boxStrokeColor="@color/border"
-                    app:hintEnabled="false"
-                    android:layout_marginEnd="8dp">
+                    app:hintEnabled="false">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tag_edit_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:imeOptions="actionDone"
-                        android:maxLines="1"
+                        android:layout_height="48dp"
                         android:hint="Add a tag"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
                         android:textColor="@color/primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -203,10 +204,10 @@
                     android:id="@+id/button_add_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:backgroundTint="@color/primary"
                     android:text="Add"
                     android:textColor="@color/primary_foreground"
-                    android:backgroundTint="@color/primary"
+                    android:visibility="visible"
                     app:cornerRadius="8dp" />
             </LinearLayout>
 
