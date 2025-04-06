@@ -24,14 +24,12 @@ object NoteEditKeyboardUtil {
             if (event.action == MotionEvent.ACTION_DOWN) {
                 hideKeyboard(activity)
                 v.clearFocus() // Clear focus from the touched view itself
-                // Also clear focus from any EditText that might have it
                 activity.currentFocus?.let { focusedView ->
                     if (focusedView is EditText) {
                         focusedView.clearFocus()
                     }
                 }
             }
-            // Return false so touch events are still processed (e.g., for scrolling)
             false
         }
     }

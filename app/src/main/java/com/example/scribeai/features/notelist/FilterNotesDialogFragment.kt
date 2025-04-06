@@ -1,6 +1,5 @@
 package com.example.scribeai.features.notelist
 
-// Removed: import androidx.fragment.app.activityViewModels
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -17,25 +16,21 @@ import kotlinx.coroutines.launch
 
 class FilterNotesDialogFragment : DialogFragment() {
 
-    // Interface for communication back to the Activity
     interface FilterDialogListener {
         fun onFiltersApplied(selectedTags: Set<String>)
         fun onFiltersCleared()
-        // Function to get necessary data from Activity/ViewModel
         suspend fun getAllAvailableTags(): List<String>
         fun getCurrentSelectedTags(): Set<String>
     }
 
     private var listener: FilterDialogListener? = null
 
-    // View Binding instance
     private var _binding: DialogFilterNotesBinding? = null
     private val binding
         get() = _binding!!
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        // Attach the listener
         try {
             listener = context as FilterDialogListener
         } catch (e: ClassCastException) {
@@ -46,10 +41,8 @@ class FilterNotesDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogFilterNotesBinding.inflate(LayoutInflater.from(context))
 
-        // Get initial state from the listener (Activity)
         val currentSelectedTags = listener?.getCurrentSelectedTags() ?: emptySet()
 
-        // Define predefined tags and colors (Consider moving this)
         val predefinedTags =
                 listOf(
                         "CS 101",
@@ -81,7 +74,6 @@ class FilterNotesDialogFragment : DialogFragment() {
                         Pair(0xFFE8EAF6.toInt(), 0xFF1A237E.toInt())
                 )
 
-        // Fetch all unique tags via listener and populate chips
         lifecycleScope.launch {
             val allAvailableTags = listener?.getAllAvailableTags() ?: emptyList()
             populateChips(
@@ -94,7 +86,7 @@ class FilterNotesDialogFragment : DialogFragment() {
         }
 
         binding.buttonClearFilters.setOnClickListener {
-            listener?.onFiltersCleared() // Call listener method
+            listener?.onFiltersCleared()
             dismiss()
         }
 
@@ -104,14 +96,13 @@ class FilterNotesDialogFragment : DialogFragment() {
                 val chip = binding.chipGroupTags.findViewById<Chip>(chipId)
                 chip?.text?.toString()?.let { tag -> newSelectedTags.add(tag) }
             }
-            listener?.onFiltersApplied(newSelectedTags) // Call listener method
+            listener?.onFiltersApplied(newSelectedTags)
             dismiss()
         }
 
         return AlertDialog.Builder(requireActivity()).setView(binding.root).create()
     }
 
-    // Helper function to populate chips
     private fun populateChips(
             chipGroup: ChipGroup,
             predefinedTags: List<String>,
@@ -143,7 +134,7 @@ class FilterNotesDialogFragment : DialogFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null // Clean up listener
+        listener = null
     }
 
     companion object {

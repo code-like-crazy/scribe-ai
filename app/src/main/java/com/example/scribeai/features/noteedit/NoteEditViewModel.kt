@@ -1,32 +1,27 @@
 package com.example.scribeai.features.noteedit
 
-import android.net.Uri // Import Uri
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.scribeai.core.data.Note // Explicitly import Note
-import com.example.scribeai.core.data.NoteRepository // Explicitly import NoteRepository
-import com.example.scribeai.core.data.NoteType // Explicitly import NoteType
+import com.example.scribeai.core.data.Note
+import com.example.scribeai.core.data.NoteRepository
+import com.example.scribeai.core.data.NoteType
 import java.util.*
-import kotlinx.coroutines.flow.firstOrNull // Import firstOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class NoteEditViewModel(
-        private val repository: NoteRepository,
-        private val noteId: Long? // Null if creating a new note
-) : ViewModel() {
+class NoteEditViewModel(private val repository: NoteRepository, private val noteId: Long?) :
+        ViewModel() {
 
-    // LiveData to hold the note being edited (if noteId is not null)
     private val _note = MutableLiveData<Note?>()
     val note: LiveData<Note?> = _note
 
-    // LiveData to hold the URI of the image selected for OCR/display
     private val _selectedImageUri = MutableLiveData<Uri?>()
     val selectedImageUri: LiveData<Uri?> = _selectedImageUri
 
-    // LiveData for tags
     private val _tags = MutableLiveData<List<String>>(emptyList())
     val tags: LiveData<List<String>> = _tags
 
@@ -38,22 +33,17 @@ class NoteEditViewModel(
 
     private fun loadNote(id: Long) {
         viewModelScope.launch {
-            // Collect the first value from the flow (or null if flow is empty)
             val loadedNote = repository.getNoteById(id).firstOrNull()
             _note.value = loadedNote
-            // Initialize tags from the loaded note
             _tags.value = loadedNote?.tags ?: emptyList()
-            // Also set the initial image URI if the note has one
             loadedNote?.imageUri?.let { _selectedImageUri.value = Uri.parse(it) }
         }
     }
 
-    // Function called by Activity when an image is selected
     fun setSelectedImageUri(uri: Uri?) {
         _selectedImageUri.value = uri
     }
 
-    // --- Tag Management ---
     fun addTag(tag: String) {
         val currentTags = _tags.value?.toMutableList() ?: mutableListOf()
         val trimmedTag = tag.trim()
@@ -69,7 +59,6 @@ class NoteEditViewModel(
             _tags.value = currentTags
         }
     }
-    // --- End Tag Management ---
 
     fun saveNote(title: String, content: String) {
         viewModelScope.launch {
@@ -86,16 +75,13 @@ class NoteEditViewModel(
 
             val existingNote = _note.value // Get current note if editing
             val timestamp = System.currentTimeMillis() // Use Long timestamp
-            val imageUriToSave =
-                    _selectedImageUri.value // Already contains both camera and drawing URIs
+            val imageUriToSave = _selectedImageUri.value
 
             if (existingNote == null) {
-                // Create new note
                 val noteType =
                         when {
-                            imageUriToSave?.toString()?.endsWith(".png") == true ->
-                                    NoteType.IMAGE // Drawing
-                            imageUriToSave != null -> NoteType.IMAGE // Camera photo
+                            imageUriToSave?.toString()?.endsWith(".png") == true -> NoteType.IMAGE
+                            imageUriToSave != null -> NoteType.IMAGE
                             else -> NoteType.TEXT
                         }
                 val newNote =
@@ -103,18 +89,16 @@ class NoteEditViewModel(
                                 title = trimmedTitle,
                                 content = trimmedContent,
                                 imageUri = imageUriToSave?.toString(),
-                                tags = _tags.value ?: emptyList(), // Use current tags
+                                tags = _tags.value ?: emptyList(),
                                 createdAt = timestamp,
                                 noteType = noteType
                         )
                 repository.insert(newNote)
             } else {
-                // Update existing note
                 val noteType =
                         when {
-                            imageUriToSave?.toString()?.endsWith(".png") == true ->
-                                    NoteType.IMAGE // Drawing
-                            imageUriToSave != null -> NoteType.IMAGE // Camera photo
+                            imageUriToSave?.toString()?.endsWith(".png") == true -> NoteType.IMAGE
+                            imageUriToSave != null -> NoteType.IMAGE
                             else -> existingNote.noteType
                         }
 
@@ -123,15 +107,13 @@ class NoteEditViewModel(
                                 title = trimmedTitle,
                                 content = trimmedContent,
                                 imageUri = imageUriToSave?.toString() ?: existingNote.imageUri,
-                                tags = _tags.value ?: existingNote.tags, // Use current tags
-                                createdAt = timestamp, // Keep original creation time? Maybe update
-                                // modified time? For now, updating.
+                                tags = _tags.value ?: existingNote.tags,
+                                createdAt = timestamp,
                                 noteType = noteType
                         )
                 repository.update(updatedNote)
             }
 
-            // Clear the selected image URI after saving
             _selectedImageUri.postValue(null)
         }
     }

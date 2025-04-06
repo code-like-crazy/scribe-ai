@@ -1,10 +1,11 @@
 package com.example.scribeai.features.noteedit
 
-// Removed jsonObject import as it's not used for schema definition here
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
@@ -19,14 +20,12 @@ import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import java.io.IOException
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable // Keep for data class
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-// Define a data class for the structured JSON response
-@Serializable data class GeminiOcrResponse(val extracted_notes_markdown: String)
+@kotlinx.serialization.Serializable
+data class GeminiOcrResponse(val extracted_notes_markdown: String)
 
-// Callback interface for Gemini results
 interface GeminiProcessorCallback {
     fun onOcrSuccess(markdownText: String)
     fun onOcrError(message: String)
@@ -55,17 +54,13 @@ class NoteEditGeminiProcessor(
         if (apiKey.isEmpty()) {
             Log.e(TAG, "Gemini API Key is missing.")
             callback.onOcrError("Error: Gemini API Key is missing.")
-            // Cannot proceed without API key
             return
         }
 
-        // --- Structured Output Configuration ---
         val config = generationConfig {
             temperature = 0.2f
-            responseMimeType = "application/json" // Keep requesting JSON
-            // Remove the problematic responseSchema definition
-            // responseSchema = ...
-            stopSequences = listOf("---", "Note:", "Summary:", "Response:") // Keep stop sequences
+            responseMimeType = "application/json"
+            stopSequences = listOf("---", "Note:", "Summary:", "Response:")
         }
 
         val safetySettings =
@@ -118,8 +113,6 @@ class NoteEditGeminiProcessor(
                     return@launch
                 }
 
-                // Enhanced prompt requesting varied Markdown, H2/H3 headings, embedded links, and
-                // fitting the structured output schema
                 val prompt =
                         """
                 Analyze the image provided and extract all text content meticulously.
@@ -145,12 +138,10 @@ class NoteEditGeminiProcessor(
                 Log.d(TAG, "Sending request to Gemini...")
                 val response = generativeModel.generateContent(inputContent)
 
-                // Log the raw response text for debugging
                 Log.d(TAG, "Raw Gemini Response Text: ${response.text}")
 
                 response.text?.let { jsonString ->
                     try {
-                        // Parse the JSON response using kotlinx.serialization
                         val parsedResponse = json.decodeFromString<GeminiOcrResponse>(jsonString)
                         val markdownText = parsedResponse.extracted_notes_markdown
 
@@ -158,15 +149,12 @@ class NoteEditGeminiProcessor(
                         callback.onOcrSuccess(markdownText)
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to parse Gemini JSON response", e)
-                        // Check if the response looks like it was intended to be JSON but is
-                        // malformed
                         if (jsonString.trimStart().startsWith("{")) {
                             Log.e(TAG, "Malformed/incomplete JSON received: $jsonString")
                             callback.onOcrError(
                                     "AI response was incomplete or malformed. Please try again."
                             )
                         } else {
-                            // The response wasn't even trying to be JSON
                             Log.w(
                                     TAG,
                                     "Received non-JSON response when JSON was expected: $jsonString"
@@ -201,16 +189,20 @@ class NoteEditGeminiProcessor(
         }
     }
 
-    // Helper function to convert Uri to Bitmap
+    @Suppress("DEPRECATION")
     private fun uriToBitmap(uri: Uri): Bitmap? {
         return try {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
-                decoder.isMutableRequired = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                    decoder.isMutableRequired = true
+                }
+            } else {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
             }
         } catch (e: IOException) {
-            Log.e(TAG, "Error converting Uri to Bitmap", e)
+            Log.e(TAG, "IO Error converting Uri to Bitmap", e)
             null
         } catch (e: SecurityException) {
             Log.e(TAG, "Security exception reading Uri", e)
