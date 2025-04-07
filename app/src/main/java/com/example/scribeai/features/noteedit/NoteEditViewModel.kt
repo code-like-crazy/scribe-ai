@@ -9,8 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.scribeai.core.data.Note
 import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.core.data.NoteType
-import java.util.*
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class NoteEditViewModel(private val repository: NoteRepository, private val noteId: Long?) :
@@ -19,24 +17,24 @@ class NoteEditViewModel(private val repository: NoteRepository, private val note
     private val _note = MutableLiveData<Note?>()
     val note: LiveData<Note?> = _note
 
-    private val _selectedImageUri = MutableLiveData<Uri?>()
-    val selectedImageUri: LiveData<Uri?> = _selectedImageUri
-
     private val _tags = MutableLiveData<List<String>>(emptyList())
     val tags: LiveData<List<String>> = _tags
 
-    init {
-        if (noteId != null) {
-            loadNote(noteId)
-        }
-    }
+    private val _selectedImageUri = MutableLiveData<Uri?>()
+    val selectedImageUri: LiveData<Uri?> = _selectedImageUri
 
-    private fun loadNote(id: Long) {
-        viewModelScope.launch {
-            val loadedNote = repository.getNoteById(id).firstOrNull()
-            _note.value = loadedNote
-            _tags.value = loadedNote?.tags ?: emptyList()
-            loadedNote?.imageUri?.let { _selectedImageUri.value = Uri.parse(it) }
+    private val _mode = MutableLiveData<String>("text")
+    val mode: LiveData<String> = _mode
+
+    init {
+        noteId?.let { id ->
+            viewModelScope.launch {
+                repository.getNoteById(id).collect { note ->
+                    _note.value = note
+                    _tags.value = note?.tags ?: emptyList()
+                    note?.imageUri?.let { uri -> _selectedImageUri.value = Uri.parse(uri) }
+                }
+            }
         }
     }
 
@@ -44,86 +42,55 @@ class NoteEditViewModel(private val repository: NoteRepository, private val note
         _selectedImageUri.value = uri
     }
 
+    fun setMode(mode: String) {
+        _mode.value = mode
+    }
+
     fun addTag(tag: String) {
         val currentTags = _tags.value?.toMutableList() ?: mutableListOf()
-        val trimmedTag = tag.trim()
-        if (trimmedTag.isNotBlank() && !currentTags.contains(trimmedTag)) {
-            currentTags.add(trimmedTag)
+        if (!currentTags.contains(tag)) {
+            currentTags.add(tag)
             _tags.value = currentTags
         }
     }
 
     fun removeTag(tag: String) {
-        val currentTags = _tags.value?.toMutableList() ?: mutableListOf()
-        if (currentTags.remove(tag)) {
-            _tags.value = currentTags
-        }
-    }
-
-    fun saveNote(title: String, content: String) {
-        viewModelScope.launch {
-            val trimmedTitle = title.trim()
-            val trimmedContent = content.trim()
-
-            if (trimmedTitle.isEmpty() &&
-                            trimmedContent.isEmpty() &&
-                            _selectedImageUri.value == null
-            ) {
-                // Optional: Add some error state LiveData if needed
-                return@launch
-            }
-
-            val existingNote = _note.value // Get current note if editing
-            val timestamp = System.currentTimeMillis() // Use Long timestamp
-            val imageUriToSave = _selectedImageUri.value
-
-            if (existingNote == null) {
-                val noteType =
-                        when {
-                            imageUriToSave?.toString()?.endsWith(".png") == true -> NoteType.IMAGE
-                            imageUriToSave != null -> NoteType.IMAGE
-                            else -> NoteType.TEXT
-                        }
-                val newNote =
-                        Note(
-                                title = trimmedTitle,
-                                content = trimmedContent,
-                                imageUri = imageUriToSave?.toString(),
-                                tags = _tags.value ?: emptyList(),
-                                createdAt = timestamp,
-                                noteType = noteType
-                        )
-                repository.insert(newNote)
-            } else {
-                val noteType =
-                        when {
-                            imageUriToSave?.toString()?.endsWith(".png") == true -> NoteType.IMAGE
-                            imageUriToSave != null -> NoteType.IMAGE
-                            else -> existingNote.noteType
-                        }
-
-                val updatedNote =
-                        existingNote.copy(
-                                title = trimmedTitle,
-                                content = trimmedContent,
-                                imageUri = imageUriToSave?.toString() ?: existingNote.imageUri,
-                                tags = _tags.value ?: existingNote.tags,
-                                createdAt = timestamp,
-                                noteType = noteType
-                        )
-                repository.update(updatedNote)
-            }
-
-            _selectedImageUri.postValue(null)
-        }
+        val currentTags = _tags.value?.toMutableList() ?: return
+        currentTags.remove(tag)
+        _tags.value = currentTags
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch { repository.delete(note) }
     }
+
+    fun saveNote(title: String, content: String) {
+        viewModelScope.launch {
+            val note =
+                    Note(
+                            id = noteId ?: 0,
+                            title = title,
+                            content = content,
+                            imageUri = _selectedImageUri.value?.toString(),
+                            tags = _tags.value ?: emptyList(),
+                            createdAt = System.currentTimeMillis(),
+                            noteType =
+                                    when (_mode.value) {
+                                        "text" -> NoteType.TEXT
+                                        "draw" -> NoteType.HANDWRITTEN
+                                        else -> NoteType.IMAGE
+                                    }
+                    )
+
+            if (noteId == null) {
+                repository.insert(note)
+            } else {
+                repository.update(note)
+            }
+        }
+    }
 }
 
-// Factory for creating NoteEditViewModel with dependencies
 class NoteEditViewModelFactory(private val repository: NoteRepository, private val noteId: Long?) :
         ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

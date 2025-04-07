@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="dialog_image_source_title">Choose Image Source</string>
+    <string name="label_input_mode">Input Mode</string>
+    <string name="mode_text">Text</string>
+    <string name="mode_image">Image</string>
+    <string name="mode_draw">Draw</string>
     <!-- App -->
     <string name="app_name">ScribeAI</string>
 

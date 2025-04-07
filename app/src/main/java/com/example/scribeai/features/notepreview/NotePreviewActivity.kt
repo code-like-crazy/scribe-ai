@@ -52,11 +52,7 @@ class NotePreviewActivity : AppCompatActivity() {
         // .listItemMarginBottom(resources.getDimensionPixelSize(R.dimen.list_item_margin_bottom))
         //     .build()
 
-        markwon =
-                Markwon.builder(this)
-                        .usePlugin(LinkifyPlugin.create()) // Enable link detection
-                        // .usePlugin(CorePlugin.create()) // Using default CorePlugin implicitly
-                        .build() // Build without custom theme for now
+        markwon = Markwon.builder(this).usePlugin(LinkifyPlugin.create()).build()
 
         setupToolbar()
         noteId = intent.getLongExtra(NoteEditActivity.EXTRA_NOTE_ID, -1L)
@@ -110,7 +106,8 @@ class NotePreviewActivity : AppCompatActivity() {
         val formattedDate = dateFormat.format(Date(note.createdAt))
         binding.textViewNoteDatetime.text = formattedDate
 
-        markwon.setMarkdown(binding.textViewNoteContent, note.content ?: "")
+        val processedContent = (note.content ?: "").replace("\n", "  \n")
+        markwon.setMarkdown(binding.textViewNoteContent, processedContent)
 
         note.imageUri?.let { uriString ->
             binding.imageSection.visibility = View.VISIBLE

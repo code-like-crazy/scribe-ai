@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.example.scribeai.core.ui.views.DrawingView
 import com.example.scribeai.databinding.ActivityDrawingBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -24,6 +25,7 @@ class DrawingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDrawingBinding
     private var outputUri: Uri? = null // To store the URI of the saved drawing
+    private lateinit var drawingView: DrawingView
 
     companion object {
         const val EXTRA_DRAWING_URI =
@@ -41,15 +43,15 @@ class DrawingActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarDrawing)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // Enable back button
 
+        drawingView = binding.drawingView
+
         // Load existing drawing if URI is passed
         intent.getStringExtra(EXTRA_DRAWING_URI)?.let { uriString ->
             try {
-                // DrawingView removed, cannot load bitmap
-                Log.w(TAG, "DrawingView removed, cannot load existing drawing from URI: $uriString")
-                Toast.makeText(this, "Drawing feature disabled", Toast.LENGTH_SHORT).show()
-                // Optionally finish immediately if loading was the only purpose
-                // finish()
-            } catch (e: Exception) { // Catch generic exception for loading issues
+                val uri = Uri.parse(uriString)
+                val bitmap = loadBitmapFromUri(uri)
+                drawingView.loadBitmap(bitmap)
+            } catch (e: Exception) {
                 Log.e(TAG, "Error loading existing drawing from URI: $uriString", e)
                 Toast.makeText(this, "Failed to load existing drawing", Toast.LENGTH_SHORT).show()
             }
@@ -57,15 +59,12 @@ class DrawingActivity : AppCompatActivity() {
 
         // Handle toolbar navigation (back button)
         binding.toolbarDrawing.setNavigationOnClickListener {
-            // TODO: Add confirmation if drawing is unsaved?
-            setResult(Activity.RESULT_CANCELED) // Indicate cancellation
+            setResult(Activity.RESULT_CANCELED)
             finish()
         }
 
-        // TODO: Add menu/buttons for Save, Clear, Color, Stroke Width
-        // For now, let's assume saving happens on back press if changed, or via a dedicated button
-        // later.
-        // We'll implement a basic save on back press for now.
+        // Set up save button
+        binding.fabSaveDrawing.setOnClickListener { saveDrawingAndFinish() }
     }
 
     // Helper function to load Bitmap from URI (handles different Android versions)
@@ -87,25 +86,23 @@ class DrawingActivity : AppCompatActivity() {
     }
 
     private fun saveDrawingAndFinish() {
-        // DrawingView removed, cannot save
-        Log.w(TAG, "DrawingView removed, cannot save drawing.")
-        Toast.makeText(this, "Drawing feature disabled", Toast.LENGTH_SHORT).show()
-        setResult(Activity.RESULT_CANCELED) // Indicate failure or cancellation
-        finish()
-        /* Original save logic:
         try {
-            // val bitmap = binding.drawingViewFullscreen.getBitmap() // Removed
-            // ... rest of saving logic ...
+            val bitmap = drawingView.getBitmap()
+            val drawingFile = createDrawingFile()
+
+            FileOutputStream(drawingFile).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
+
             outputUri =
                     FileProvider.getUriForFile(
                             this,
                             "${applicationContext.packageName}.provider",
                             drawingFile
                     )
+
             Log.d(TAG, "Drawing saved to URI: $outputUri")
 
-            // Return the URI to the calling activity
             val resultIntent =
                     Intent().apply { putExtra(RESULT_EXTRA_SAVED_URI, outputUri.toString()) }
             setResult(Activity.RESULT_OK, resultIntent)
@@ -113,10 +110,9 @@ class DrawingActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Log.e(TAG, "Error saving drawing", e)
             Toast.makeText(this, "Failed to save drawing", Toast.LENGTH_SHORT).show()
-            setResult(Activity.RESULT_CANCELED) // Indicate failure
-            // finish() // Finish even if saving failed
+            setResult(Activity.RESULT_CANCELED)
+            finish()
         }
-        */
     }
 
     // Helper to create a unique file for drawings

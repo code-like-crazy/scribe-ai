@@ -1,6 +1,7 @@
 package com.example.scribeai.features.noteedit
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.example.scribeai.R
 import com.example.scribeai.core.data.AppDatabase
 import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.example.scribeai.features.drawing.DrawingActivity
 import com.google.android.material.chip.ChipGroup
 import java.io.File
 import java.io.FileOutputStream
@@ -80,7 +82,19 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         lifecycle.addObserver(resultHandler)
         previewManager = NoteEditPreviewManager(this, binding)
         uiManager = NoteEditUIManager(this, binding, viewModel, resultHandler)
-        uiManager.setupInputModeButtons { null }
+        uiManager.setupInputModeButtons { mode ->
+            when (mode) {
+                "draw" -> {
+                    val intent = Intent(this, DrawingActivity::class.java)
+                    viewModel.selectedImageUri.value?.let { uri ->
+                        intent.putExtra(DrawingActivity.EXTRA_DRAWING_URI, uri.toString())
+                    }
+                    resultHandler.launchDrawingModeForResult(intent)
+                    true
+                }
+                else -> null
+            }
+        }
 
         tagManager =
                 NoteEditTagManager(
@@ -187,6 +201,17 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
 
     private fun setupSaveButton() {
         binding.buttonSaveNote.setOnClickListener { saveNoteAndFinish() }
+    }
+
+    override fun onDrawResult(uri: Uri) {
+        val internalUri = copyImageToInternalStorage(uri)
+        if (internalUri != null) {
+            viewModel.setSelectedImageUri(internalUri)
+            previewManager.showImagePreview(internalUri)
+            uiManager.showDrawMode()
+        } else {
+            onResultCancelledOrFailed(true)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

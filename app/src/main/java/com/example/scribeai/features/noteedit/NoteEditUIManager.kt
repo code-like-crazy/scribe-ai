@@ -1,18 +1,38 @@
 package com.example.scribeai.features.noteedit
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.net.Uri
-import android.view.LayoutInflater
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.example.scribeai.R
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.google.android.material.button.MaterialButton
 
 interface NoteEditLauncher {
         fun launchCamera()
         fun launchGallery()
+}
+
+class ImageSourceDialog(context: Context, private val onSourceSelected: (Boolean) -> Unit) :
+        AlertDialog.Builder(context) {
+        init {
+                setTitle(R.string.dialog_image_source_title)
+                setView(R.layout.dialog_image_source_content)
+                create().also { dialog ->
+                        dialog.setOnShowListener {
+                                dialog.findViewById<Button>(R.id.dialog_button_camera)
+                                        ?.setOnClickListener {
+                                                onSourceSelected(true)
+                                                dialog.dismiss()
+                                        }
+                                dialog.findViewById<Button>(R.id.dialog_button_gallery)
+                                        ?.setOnClickListener {
+                                                onSourceSelected(false)
+                                                dialog.dismiss()
+                                        }
+                        }
+                }
+        }
 }
 
 class NoteEditUIManager(
@@ -21,127 +41,70 @@ class NoteEditUIManager(
         private val viewModel: NoteEditViewModel,
         private val launcher: NoteEditLauncher
 ) {
+        companion object {
+                private const val MODE_TEXT = "text"
+                private const val MODE_CAMERA = "camera"
+                private const val MODE_DRAW = "draw"
+        }
 
-        fun setupInputModeButtons(currentDrawingUriProvider: () -> Uri?) {
-                binding.buttonModeType.setOnClickListener { updateMode(isTextMode = true) }
-                binding.buttonModeCamera.setOnClickListener {
-                        updateMode(isTextMode = false)
-                        showImageSourceDialog()
-                }
-                updateMode(isTextMode = true)
+        private var onModeSelected: ((String) -> Boolean?)? = null
+
+        fun setupInputModeButtons(onModeSelected: ((String) -> Boolean?)? = null) {
+                this.onModeSelected = onModeSelected
+
+                binding.buttonModeType.setOnClickListener { showTextMode() }
+                binding.buttonModeCamera.setOnClickListener { showCameraModeDialog() }
+                // binding.buttonModeDraw.setOnClickListener {
+                //         val handled = onModeSelected?.invoke(MODE_DRAW) ?: false
+                //         if (!handled) {
+                //                 showDrawMode()
+                //         }
+                // }
+        }
+
+        private fun showCameraModeDialog() {
+                ImageSourceDialog(context) { useCamera ->
+                                if (useCamera) {
+                                        launcher.launchCamera()
+                                } else {
+                                        launcher.launchGallery()
+                                }
+                        }
+                        .show()
         }
 
         fun showTextMode() {
-                updateMode(isTextMode = true)
+                updateButtonStates(MODE_TEXT)
+                viewModel.setMode(MODE_TEXT)
         }
 
         fun showCameraMode() {
-                updateMode(isTextMode = false)
+                updateButtonStates(MODE_CAMERA)
+                viewModel.setMode(MODE_CAMERA)
         }
 
-        private fun updateMode(isTextMode: Boolean) {
-                binding.titleInputLayout.visibility = View.VISIBLE
-                binding.contentInputLayout.visibility = View.VISIBLE
-                binding.imagePreviewContainer.visibility =
-                        if (!isTextMode && viewModel.selectedImageUri.value != null) View.VISIBLE
-                        else View.GONE
-
-                if (isTextMode) {
-                        viewModel.setSelectedImageUri(null)
-                }
-
-                binding.buttonModeType.apply {
-                        setBackgroundColor(
-                                context.getColor(
-                                        if (isTextMode) R.color.colorPrimary
-                                        else android.R.color.transparent
-                                )
-                        )
-                        strokeWidth = if (isTextMode) 0 else 1
-                        strokeColor = ColorStateList.valueOf(context.getColor(R.color.colorSurface))
-                        setTextColor(
-                                context.getColor(
-                                        if (isTextMode) R.color.colorOnPrimary
-                                        else R.color.colorOnSurface
-                                )
-                        )
-                        iconTint =
-                                ColorStateList.valueOf(
-                                        context.getColor(
-                                                if (isTextMode) R.color.colorOnPrimary
-                                                else R.color.colorOnSurface
-                                        )
-                                )
-                }
-
-                binding.buttonModeCamera.apply {
-                        setBackgroundColor(
-                                context.getColor(
-                                        if (!isTextMode) R.color.colorPrimary
-                                        else android.R.color.transparent
-                                )
-                        )
-                        strokeWidth = if (!isTextMode) 0 else 1
-                        strokeColor = ColorStateList.valueOf(context.getColor(R.color.colorSurface))
-                        setTextColor(
-                                context.getColor(
-                                        if (!isTextMode) R.color.colorOnPrimary
-                                        else R.color.colorOnSurface
-                                )
-                        )
-                        iconTint =
-                                ColorStateList.valueOf(
-                                        context.getColor(
-                                                if (!isTextMode) R.color.colorOnPrimary
-                                                else R.color.colorOnSurface
-                                        )
-                                )
-                }
+        fun showDrawMode() {
+                updateButtonStates(MODE_DRAW)
+                viewModel.setMode(MODE_DRAW)
         }
 
-        private fun showImageSourceDialog() {
-                val options =
-                        arrayOf(
-                                context.getString(R.string.dialog_option_camera),
-                                context.getString(R.string.dialog_option_gallery)
+        private fun updateButtonStates(selectedMode: String) {
+                val selectedColor = ContextCompat.getColor(context, R.color.primary)
+                val selectedBgColor = ContextCompat.getColor(context, R.color.border)
+                val defaultColor = ContextCompat.getColor(context, R.color.primary)
+                val defaultBgColor = ContextCompat.getColor(context, R.color.border)
+
+                fun updateButtonState(button: MaterialButton, isSelectedMode: Boolean) {
+                        button.isSelected = isSelectedMode
+                        button.setTextColor(if (isSelectedMode) selectedColor else defaultColor)
+                        button.backgroundTintList = null
+                        button.setBackgroundColor(
+                                if (isSelectedMode) selectedBgColor else defaultBgColor
                         )
-
-                val customView =
-                        LayoutInflater.from(context)
-                                .inflate(R.layout.dialog_image_source_content, null)
-
-                val dialog =
-                        AlertDialog.Builder(context)
-                                .setTitle(context.getString(R.string.dialog_title_image_input_mode))
-                                .setView(customView)
-                                .setOnCancelListener {
-                                        if (viewModel.selectedImageUri.value == null) {
-                                                showTextMode()
-                                        }
-                                }
-                                .create()
-
-                val cancelButton = customView.findViewById<Button>(R.id.dialog_button_cancel)
-                val cameraButton = customView.findViewById<Button>(R.id.dialog_button_camera)
-                val galleryButton = customView.findViewById<Button>(R.id.dialog_button_gallery)
-
-                cancelButton.setOnClickListener {
-                        if (viewModel.selectedImageUri.value == null) {
-                                showTextMode()
-                        }
-                        dialog.dismiss()
                 }
 
-                cameraButton.setOnClickListener {
-                        launcher.launchCamera()
-                        dialog.dismiss()
-                }
-
-                galleryButton.setOnClickListener {
-                        launcher.launchGallery()
-                        dialog.dismiss()
-                }
-
-                dialog.show()
+                updateButtonState(binding.buttonModeType, selectedMode == MODE_TEXT)
+                updateButtonState(binding.buttonModeCamera, selectedMode == MODE_CAMERA)
+                // updateButtonState(binding.buttonModeDraw, selectedMode == MODE_DRAW)
         }
 }

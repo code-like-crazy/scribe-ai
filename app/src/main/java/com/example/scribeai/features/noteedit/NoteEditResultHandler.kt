@@ -18,23 +18,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// Callback interface for the Activity
-interface NoteEditResultCallback {
-    fun onImageResult(uri: Uri)
-    fun onResultCancelledOrFailed(isNewDrawingAttempt: Boolean)
-    fun showTextModeUI()
-    fun showError(message: String)
-}
-
 class NoteEditResultHandler(
         private val registry: ActivityResultRegistry,
         private val lifecycleOwner: LifecycleOwner,
         private val context: Context,
         private val callback: NoteEditResultCallback
-) : DefaultLifecycleObserver, NoteEditLauncher { // Using existing NoteEditLauncher from UIManager
+) : DefaultLifecycleObserver, NoteEditLauncher {
 
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
+    private lateinit var drawingLauncher: ActivityResultLauncher<Intent>
     private var imageUriForCamera: Uri? = null
     private var currentPhotoPath: String? = null
 
@@ -46,6 +39,7 @@ class NoteEditResultHandler(
     override fun onCreate(owner: LifecycleOwner) {
         registerGalleryLauncher()
         registerCameraLauncher()
+        registerDrawingLauncher()
     }
 
     private fun registerGalleryLauncher() {
@@ -103,6 +97,32 @@ class NoteEditResultHandler(
                 }
     }
 
+    private fun registerDrawingLauncher() {
+        drawingLauncher =
+                registry.register(
+                        "drawing",
+                        lifecycleOwner,
+                        ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        result.data?.getStringExtra("com.example.scribeai.RESULT_EXTRA_SAVED_URI")
+                                ?.let { uriString ->
+                                    val uri = Uri.parse(uriString)
+                                    Log.d(TAG, "Drawing saved: $uri")
+                                    callback.onDrawResult(uri)
+                                }
+                                ?: run {
+                                    Log.e(TAG, "Failed to get URI from drawing result")
+                                    callback.showError("Failed to save drawing")
+                                    callback.onResultCancelledOrFailed(isNewDrawingAttempt = true)
+                                }
+                    } else {
+                        Log.d(TAG, "Drawing cancelled or failed")
+                        callback.onResultCancelledOrFailed(isNewDrawingAttempt = true)
+                    }
+                }
+    }
+
     override fun launchCamera() {
         try {
             val photoFile: File = createImageFile()
@@ -127,7 +147,9 @@ class NoteEditResultHandler(
         pickImageLauncher.launch(intent)
     }
 
-    // launchDrawing removed
+    fun launchDrawingModeForResult(intent: Intent) {
+        drawingLauncher.launch(intent)
+    }
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
@@ -159,7 +181,4 @@ class NoteEditResultHandler(
             }
         }
     }
-
-    // fun setCurrentDrawingUri(uri: Uri?) {} // Drawing feature removed
-    // fun getCurrentDrawingUri(): Uri? = null // Drawing feature removed
 }

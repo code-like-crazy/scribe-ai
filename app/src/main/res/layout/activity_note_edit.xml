@@ -44,7 +44,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Input Mode"
+                android:text="@string/label_input_mode"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="@color/muted_foreground"
                 android:layout_marginBottom="8dp" />
@@ -63,7 +63,7 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:text="Text"
+                    android:text="@string/mode_text"
                     android:backgroundTint="@color/border"
                     android:textColor="@color/primary"
                     app:cornerRadius="8dp"
@@ -76,12 +76,25 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:text="Image"
+                    android:text="@string/mode_image"
                     android:backgroundTint="@color/border"
                     android:textColor="@color/primary"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_camera_alt_24"
-                    app:iconTint="@color/primary" />
+                    app:iconTint="@color/primary"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_mode_draw"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="@string/mode_draw"
+                    android:backgroundTint="@color/border"
+                    android:textColor="@color/primary"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_draw_24"
+                    app:iconTint="@color/primary" /> -->
 
             </LinearLayout>
 
