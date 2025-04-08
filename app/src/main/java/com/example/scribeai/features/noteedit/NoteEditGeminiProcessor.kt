@@ -82,7 +82,7 @@ class NoteEditGeminiProcessor(
         try {
             generativeModel =
                     GenerativeModel(
-                            modelName = "gemini-1.5-flash",
+                            modelName = "gemini-2.0-flash",
                             apiKey = apiKey,
                             generationConfig = config,
                             safetySettings = safetySettings,
