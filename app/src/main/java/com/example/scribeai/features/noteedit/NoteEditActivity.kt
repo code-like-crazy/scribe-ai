@@ -4,6 +4,7 @@ import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater // Add LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.example.scribeai.R
 import com.example.scribeai.core.data.AppDatabase
 import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
+import com.example.scribeai.databinding.DialogImageSourceContentBinding // Import correct binding
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import java.io.File
@@ -57,13 +59,11 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
 
         setupToolbar()
         initializeManagers()
-
-        supportActionBar?.title =
-                if (currentNoteId == null) {
-                    getString(R.string.title_new_note)
-                } else {
-                    getString(R.string.title_edit_note)
-                }
+        if (currentNoteId == null) {
+            getString(R.string.title_new_note)
+        } else {
+            getString(R.string.title_edit_note)
+        }
 
         observeNoteDetails()
         tagManager.setupTagInput()
@@ -293,17 +293,21 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
     }
 
     private fun showImageSourceSelectionDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
-        AlertDialog.Builder(this)
-                .setTitle("Add Image")
-                .setItems(options) { dialog, which ->
-                    when (which) {
-                        0 -> resultHandler.launchCamera() // "Take Photo"
-                        1 -> resultHandler.launchGallery() // "Choose from Gallery"
-                    }
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                .show()
+        val dialogBinding = DialogImageSourceContentBinding.inflate(LayoutInflater.from(this))
+        val dialog = AlertDialog.Builder(this).setView(dialogBinding.root).create()
+
+        dialogBinding.dialogButtonCamera.setOnClickListener {
+            resultHandler.launchCamera()
+            dialog.dismiss()
+        }
+
+        dialogBinding.dialogButtonGallery.setOnClickListener {
+            resultHandler.launchGallery()
+            dialog.dismiss()
+        }
+
+        dialogBinding.dialogButtonCancel.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
     }
 }

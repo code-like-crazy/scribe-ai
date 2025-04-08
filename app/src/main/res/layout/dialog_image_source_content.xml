@@ -4,62 +4,73 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="0dp"> <!-- Adjust padding as needed -->
+    android:padding="24dp"> <!-- Consistent padding -->
 
     <TextView
-        android:id="@+id/dialog_message_textview"
+        android:id="@+id/dialog_title_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary"
-        android:text="@string/dialog_message_image_input_mode"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Row 1: Camera Button (Full Width) -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_button_camera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/dialog_option_camera"
-        android:textSize="14sp"
-        android:backgroundTint="@color/primary"
-        android:textColor="@color/primary_foreground"
-        app:cornerRadius="8dp" />
+        android:text="Add Image Source"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
-    <!-- Row 2: Cancel and Gallery Buttons (Side-by-side) -->
+    <TextView
+        android:id="@+id/dialog_description_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose how you want to add an image to your note."
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:textColor="@color/muted_foreground"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Side-by-side Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="8dp"> <!-- Add bottom margin for spacing -->
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
 
+        <!-- Camera Button (Outlined) -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/dialog_button_cancel"
-            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:id="@+id/dialog_button_camera"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/action_cancel"
-            android:textColor="@color/muted_foreground" />
+            android:layout_weight="1"
+            android:text="@string/dialog_option_camera"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            app:cornerRadius="8dp"
+            app:icon="@android:drawable/ic_menu_camera"
+            app:iconTint="@color/primary"
+            app:strokeColor="@color/border" />
 
+        <!-- Gallery Button (Outlined) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dialog_button_gallery"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:minHeight="48dp"
             android:text="@string/dialog_option_gallery"
-            android:textSize="14sp"
-            android:backgroundTint="@color/border"
             android:textColor="@color/primary"
-            app:cornerRadius="8dp" />
+            android:textSize="14sp"
+            app:cornerRadius="8dp"
+            app:icon="@android:drawable/ic_menu_gallery"
+            app:iconTint="@color/primary"
+            app:strokeColor="@color/border" />
 
     </LinearLayout>
+
+    <!-- Cancel Button (Text Button) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dialog_button_cancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="end"
+        android:text="@string/action_cancel"
+        android:textColor="@color/muted_foreground" />
+
 </LinearLayout>
