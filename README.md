@@ -139,6 +139,50 @@ ScribeAI bridges the gap between analog and digital productivity by combining tr
 - 📅 Theming
 - 📅 Performance Tuning
 
+## Getting Started
+
+### Prerequisites
+- Android Studio Electric Eel or newer
+- JDK 11 or higher
+- Android SDK with minimum API level 24
+- Google Play Services (for ML Kit)
+
+### Setup Instructions
+1. **Clone the Repository**
+   ```bash
+   git clone [repository-url]
+   cd scribe-ai
+   ```
+
+2. **Configure API Keys**
+   - Create a `local.properties` file in the project root
+   - Add your Gemini API key:
+     ```properties
+     GEMINI_API_KEY=your_api_key_here
+     ```
+
+3. **Open in Android Studio**
+   - Launch Android Studio
+   - Select "Open an existing project"
+   - Navigate to and select the cloned directory
+
+4. **Build the Project**
+   - Wait for Gradle sync to complete
+   - Resolve any dependency issues if prompted
+   - Build the project: `Build > Make Project`
+
+5. **Run the Application**
+   - Connect an Android device (or create an emulator)
+   - Select your device in the toolbar
+   - Click the "Run" button (green play icon)
+   - The app will be installed and launched on your device
+
+### Troubleshooting
+- Ensure USB debugging is enabled on your device
+- Check Android Studio's Event Log for detailed error messages
+- Verify Gradle sync completed successfully
+- Confirm all SDK components are installed via SDK Manager
+
 ## Project Structure
 
 ```
