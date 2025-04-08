@@ -1,7 +1,6 @@
 package com.example.scribeai.features.noteedit
 
 import android.content.Context
-import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.example.scribeai.R
@@ -13,25 +12,38 @@ interface NoteEditLauncher {
         fun launchGallery()
 }
 
-class ImageSourceDialog(context: Context, private val onSourceSelected: (Boolean) -> Unit) :
-        AlertDialog.Builder(context) {
+class ImageSourceDialog(context: Context, private val onSourceSelected: (Boolean) -> Unit) {
+        private val dialog: AlertDialog
+
         init {
-                setTitle(R.string.dialog_image_source_title)
-                setView(R.layout.dialog_image_source_content)
-                create().also { dialog ->
-                        dialog.setOnShowListener {
-                                dialog.findViewById<Button>(R.id.dialog_button_camera)
-                                        ?.setOnClickListener {
-                                                onSourceSelected(true)
-                                                dialog.dismiss()
-                                        }
-                                dialog.findViewById<Button>(R.id.dialog_button_gallery)
-                                        ?.setOnClickListener {
-                                                onSourceSelected(false)
-                                                dialog.dismiss()
-                                        }
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle(R.string.dialog_image_source_title)
+                builder.setView(R.layout.dialog_image_source_content)
+                dialog = builder.create()
+
+                dialog.setOnShowListener {
+                        dialog.findViewById<MaterialButton>(R.id.dialog_button_camera)?.apply {
+                                setOnClickListener {
+                                        onSourceSelected(true)
+                                        dialog.dismiss()
+                                }
+                        }
+                        dialog.findViewById<MaterialButton>(R.id.dialog_button_gallery)?.apply {
+                                setOnClickListener {
+                                        onSourceSelected(false)
+                                        dialog.dismiss()
+                                }
+                        }
+                        dialog.findViewById<MaterialButton>(R.id.dialog_button_cancel)?.apply {
+                                setOnClickListener {
+                                        dialog.dismiss()
+                                }
                         }
                 }
+        }
+
+        fun show() {
+                dialog.show()
         }
 }
 
