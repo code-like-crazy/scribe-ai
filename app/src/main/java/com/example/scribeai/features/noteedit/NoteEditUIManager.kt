@@ -1,122 +1,65 @@
 package com.example.scribeai.features.noteedit
 
 import android.content.Context
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
-import com.example.scribeai.R
+import android.util.Log // Ensure Log is imported
+import android.view.View // Ensure View is imported
 import com.example.scribeai.databinding.ActivityNoteEditBinding
-import com.google.android.material.button.MaterialButton
 
-interface NoteEditLauncher {
-        fun launchCamera()
-        fun launchGallery()
-}
-
-class ImageSourceDialog(context: Context, private val onSourceSelected: (Boolean) -> Unit) {
-        private val dialog: AlertDialog
-
-        init {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle(R.string.dialog_image_source_title)
-                builder.setView(R.layout.dialog_image_source_content)
-                dialog = builder.create()
-
-                dialog.setOnShowListener {
-                        dialog.findViewById<MaterialButton>(R.id.dialog_button_camera)?.apply {
-                                setOnClickListener {
-                                        onSourceSelected(true)
-                                        dialog.dismiss()
-                                }
-                        }
-                        dialog.findViewById<MaterialButton>(R.id.dialog_button_gallery)?.apply {
-                                setOnClickListener {
-                                        onSourceSelected(false)
-                                        dialog.dismiss()
-                                }
-                        }
-                        dialog.findViewById<MaterialButton>(R.id.dialog_button_cancel)?.apply {
-                                setOnClickListener {
-                                        dialog.dismiss()
-                                }
-                        }
-                }
-        }
-
-        fun show() {
-                dialog.show()
-        }
-}
-
+// TODO: Refactor or remove this class as its original purpose (managing input mode buttons)
+// is no longer relevant after the UI changes. The remaining functions might be moved
+// directly into the Activity or another more suitable manager class if still needed.
 class NoteEditUIManager(
         private val context: Context,
         private val binding: ActivityNoteEditBinding,
         private val viewModel: NoteEditViewModel,
-        private val launcher: NoteEditLauncher
+        private val launcher: NoteEditLauncher // Keep launcher if needed for other UI actions
 ) {
-        companion object {
-                private const val MODE_TEXT = "text"
-                private const val MODE_CAMERA = "camera"
-                private const val MODE_DRAW = "draw"
-        }
 
-        private var onModeSelected: ((String) -> Boolean?)? = null
+    companion object {
+        private const val TAG = "NoteEditUIManager"
+    }
 
-        fun setupInputModeButtons(onModeSelected: ((String) -> Boolean?)? = null) {
-                this.onModeSelected = onModeSelected
+    // Functions related to input mode buttons (setupInputModeButtons, selectMode,
+    // updateButtonStates, updateButtonAppearance) are removed as the buttons no longer exist.
 
-                binding.buttonModeType.setOnClickListener { showTextMode() }
-                binding.buttonModeCamera.setOnClickListener { showCameraModeDialog() }
-                // binding.buttonModeDraw.setOnClickListener {
-                //         val handled = onModeSelected?.invoke(MODE_DRAW) ?: false
-                //         if (!handled) {
-                //                 showDrawMode()
-                //         }
-                // }
-        }
+    // Keep functions that manage visibility of content/preview if they are still used elsewhere,
+    // otherwise, they can also be removed or refactored.
 
-        private fun showCameraModeDialog() {
-                ImageSourceDialog(context) { useCamera ->
-                                if (useCamera) {
-                                        launcher.launchCamera()
-                                } else {
-                                        launcher.launchGallery()
-                                }
-                        }
-                        .show()
-        }
+    fun showTextMode() {
+        // This function might still be relevant if called from somewhere else,
+        // e.g., when an image is explicitly cleared.
+        // It should now only handle visibility changes, not button states.
+        Log.d(TAG, "Showing Text Mode UI elements")
+        binding.contentInputLayout.visibility = View.VISIBLE
+        binding.imagePreviewContainer.visibility = View.GONE
+        binding.formattingToolbar.root.visibility = View.VISIBLE // Show formatting toolbar
+        // No button states to update
+        // Consider if clearing the image URI should happen here or be managed solely by the Activity/ViewModel
+        // viewModel.setSelectedImageUri(null)
+    }
 
-        fun showTextMode() {
-                updateButtonStates(MODE_TEXT)
-                viewModel.setMode(MODE_TEXT)
-        }
+    fun showCameraMode() {
+        // This function's original purpose was tied to the camera button.
+        // It might be obsolete now, as image selection is triggered differently.
+        // If kept, it should only manage visibility based on whether an image exists.
+        Log.d(TAG, "Showing Camera Mode UI elements (Image Preview)")
+        binding.contentInputLayout.visibility = View.VISIBLE // Keep content visible
+        binding.imagePreviewContainer.visibility =
+                if (viewModel.selectedImageUri.value != null) View.VISIBLE else View.GONE
+        binding.formattingToolbar.root.visibility = View.VISIBLE // Keep formatting toolbar visible
 
-        fun showCameraMode() {
-                updateButtonStates(MODE_CAMERA)
-                viewModel.setMode(MODE_CAMERA)
-        }
+        // The logic to launch the image source dialog is now in the Activity.
+        // No button states to update.
+    }
 
-        fun showDrawMode() {
-                updateButtonStates(MODE_DRAW)
-                viewModel.setMode(MODE_DRAW)
-        }
-
-        private fun updateButtonStates(selectedMode: String) {
-                val selectedColor = ContextCompat.getColor(context, R.color.primary)
-                val selectedBgColor = ContextCompat.getColor(context, R.color.border)
-                val defaultColor = ContextCompat.getColor(context, R.color.primary)
-                val defaultBgColor = ContextCompat.getColor(context, R.color.border)
-
-                fun updateButtonState(button: MaterialButton, isSelectedMode: Boolean) {
-                        button.isSelected = isSelectedMode
-                        button.setTextColor(if (isSelectedMode) selectedColor else defaultColor)
-                        button.backgroundTintList = null
-                        button.setBackgroundColor(
-                                if (isSelectedMode) selectedBgColor else defaultBgColor
-                        )
-                }
-
-                updateButtonState(binding.buttonModeType, selectedMode == MODE_TEXT)
-                updateButtonState(binding.buttonModeCamera, selectedMode == MODE_CAMERA)
-                // updateButtonState(binding.buttonModeDraw, selectedMode == MODE_DRAW)
-        }
+    fun showDrawMode() {
+        // This function was likely tied to a draw button that might also be removed.
+        // If drawing functionality is kept but triggered differently, adapt this.
+        // Otherwise, remove it.
+        Log.d(TAG, "Showing Draw Mode UI elements (Image Preview)")
+        binding.contentInputLayout.visibility = View.GONE // Hide text input? Check requirements
+        binding.imagePreviewContainer.visibility = View.VISIBLE // Show drawing preview
+        binding.formattingToolbar.root.visibility = View.GONE // Hide formatting toolbar? Check requirements
+        // No button states to update.
+    }
 }

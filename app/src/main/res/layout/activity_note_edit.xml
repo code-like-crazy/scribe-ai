@@ -40,72 +40,14 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Mode Selection Label -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_input_mode"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
-
-            <LinearLayout
-                android:id="@+id/input_mode_selector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:orientation="horizontal"
-                android:background="@drawable/input_mode_background"
-                android:padding="12dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_mode_type"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="@string/mode_text"
-                    android:backgroundTint="@color/border"
-                    android:textColor="@color/primary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_text_format_24"
-                    app:iconTint="@color/primary"
-                    android:layout_marginEnd="8dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_mode_camera"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="@string/mode_image"
-                    android:backgroundTint="@color/border"
-                    android:textColor="@color/primary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_camera_alt_24"
-                    app:iconTint="@color/primary"
-                    android:layout_marginEnd="8dp" />
-
-                <!-- <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_mode_draw"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="@string/mode_draw"
-                    android:backgroundTint="@color/border"
-                    android:textColor="@color/primary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_draw_24"
-                    app:iconTint="@color/primary" /> -->
-
-            </LinearLayout>
-
             <!-- Title Field Label -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Title"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
+                android:textColor="@color/muted_foreground" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/title_input_layout"
@@ -115,6 +57,7 @@
                 android:layout_marginBottom="24dp"
                 app:boxStrokeColor="@color/border"
                 app:hintEnabled="false">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/title_edit_text"
                     android:layout_width="match_parent"
@@ -129,23 +72,23 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Content"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
+                android:textColor="@color/muted_foreground" />
 
             <include
                 android:id="@+id/formatting_toolbar"
                 layout="@layout/layout_format_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="12dp" />
 
             <FrameLayout
                 android:id="@+id/note_edit_content_frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp">
+                android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/content_input_layout"
@@ -154,6 +97,7 @@
                     android:layout_height="wrap_content"
                     app:boxStrokeColor="@color/border"
                     app:hintEnabled="false">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/content_edit_text"
                         android:layout_width="match_parent"
@@ -161,10 +105,10 @@
                         android:gravity="top"
                         android:hint="@string/note_content_hint"
                         android:inputType="textMultiLine|textCapSentences"
-                        android:minLines="5"
                         android:minHeight="200dp"
-                        android:textColor="@color/primary"
-                        android:padding="16dp" />
+                        android:minLines="5"
+                        android:padding="16dp"
+                        android:textColor="@color/primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Animated Loading Overlay -->
@@ -181,12 +125,12 @@
                         android:layout_height="wrap_content"
                         android:indeterminate="true"
                         app:indicatorColor="@color/primary"
-                        app:trackCornerRadius="4dp"
                         app:layout_constraintBottom_toTopOf="@id/note_processing_text"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:trackCornerRadius="4dp" />
 
                     <TextView
                         android:id="@+id/note_processing_text"
@@ -205,34 +149,45 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
-            <!-- Divider -->
-            <View
+            <!-- Add Existing Notes Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_add_existing_notes"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/border"
-                android:layout_marginBottom="24dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="24dp"
+                android:text="Add existing notes"
+                android:textColor="@color/primary"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_camera_alt_24"
+                app:iconTint="@color/primary"
+                app:strokeColor="@color/border" />
+
+
+            <!-- Divider -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Tags"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/muted_foreground"
-                android:layout_marginBottom="8dp" />
+                android:textColor="@color/muted_foreground" />
 
             <!-- ChipGroup to display tags -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/tag_chip_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 app:chipSpacingHorizontal="8dp"
                 app:chipSpacingVertical="4dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="48dp"
+                android:layout_marginBottom="24dp"
                 android:gravity="start"
                 android:orientation="horizontal">
 
@@ -272,7 +227,7 @@
                 android:id="@+id/image_preview_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:visibility="gone"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
@@ -295,11 +250,10 @@
                 android:id="@+id/button_save_note"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/action_save"
-                android:textSize="16sp"
                 android:backgroundTint="@color/primary"
+                android:text="@string/action_save"
                 android:textColor="@color/primary_foreground"
+                android:textSize="16sp"
                 app:cornerRadius="8dp" />
 
         </LinearLayout>

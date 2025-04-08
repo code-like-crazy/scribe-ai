@@ -123,6 +123,12 @@ class NoteEditResultHandler(
                 }
     }
 
+    // Implementation for NoteEditLauncher interface
+    override fun showError(message: String) {
+        // Delegate to the existing callback mechanism
+        callback.showError(message)
+    }
+
     override fun launchCamera() {
         try {
             val photoFile: File = createImageFile()

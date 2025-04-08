@@ -1,7 +1,6 @@
 package com.example.scribeai.features.noteedit
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +8,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +16,6 @@ import com.example.scribeai.R
 import com.example.scribeai.core.data.AppDatabase
 import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
-import com.example.scribeai.features.drawing.DrawingActivity
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import java.io.File
@@ -84,19 +83,12 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         resultHandler = NoteEditResultHandler(activityResultRegistry, this, this, this)
         lifecycle.addObserver(resultHandler)
         previewManager = NoteEditPreviewManager(this, binding)
-        uiManager = NoteEditUIManager(this, binding, viewModel, resultHandler)
-        uiManager.setupInputModeButtons { mode ->
-            when (mode) {
-                "draw" -> {
-                    val intent = Intent(this, DrawingActivity::class.java)
-                    viewModel.selectedImageUri.value?.let { uri ->
-                        intent.putExtra(DrawingActivity.EXTRA_DRAWING_URI, uri.toString())
-                    }
-                    resultHandler.launchDrawingModeForResult(intent)
-                    true
-                }
-                else -> null
-            }
+        // uiManager = NoteEditUIManager(this, binding, viewModel, resultHandler) // UIManager might
+        // be simplified or removed later if not needed
+
+        // Setup listener for the new button
+        binding.buttonAddExistingNotes.setOnClickListener {
+            showImageSourceSelectionDialog() // Show the dialog to choose source
         }
 
         tagManager =
@@ -146,15 +138,14 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
                 it.imageUri?.let { uriString ->
                     val imageUri = Uri.parse(uriString)
                     previewManager.showImagePreview(imageUri)
-                    uiManager.showCameraMode()
+                    // No need to switch modes explicitly anymore
                 }
                         ?: run {
-                            // No image URI, default to text mode
+                            // No image URI
                             previewManager.hideAllPreviews()
-                            uiManager.showTextMode()
                         }
             }
-                    ?: run { uiManager.showTextMode() }
+                    ?: run { previewManager.hideAllPreviews() } // Default hide preview if no note
         }
 
         viewModel.tags.observe(this) { tags -> tagManager.updateTagChips(tags) }
@@ -185,7 +176,7 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         if (internalUri != null) {
             viewModel.setSelectedImageUri(internalUri)
             previewManager.showImagePreview(internalUri)
-            uiManager.showCameraMode()
+            // No need to switch modes explicitly
             geminiProcessor.processImageForOcr(internalUri)
         } else {
             onResultCancelledOrFailed(true)
@@ -193,17 +184,17 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
     }
 
     override fun onResultCancelledOrFailed(isNewDrawingAttempt: Boolean) {
-        if (isNewDrawingAttempt && viewModel.selectedImageUri.value == null) {
-            uiManager.showTextMode()
+        // If cancelled and no image was previously selected, hide preview.
+        if (viewModel.selectedImageUri.value == null) {
             previewManager.hideAllPreviews()
         } else {
-            Log.d(TAG, "Edit cancelled or failed, keeping current preview.")
+            Log.d(TAG, "Image selection cancelled or failed, keeping current preview.")
         }
     }
 
+    // This method might be obsolete now, depending on NoteEditResultCallback usage
     override fun showTextModeUI() {
-        uiManager.showTextMode()
-        previewManager.hideAllPreviews()
+        previewManager.hideAllPreviews() // Just ensure preview is hidden if needed
     }
 
     override fun showError(message: String) {
@@ -232,9 +223,9 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
         if (internalUri != null) {
             viewModel.setSelectedImageUri(internalUri)
             previewManager.showImagePreview(internalUri)
-            uiManager.showDrawMode()
+            // No need to switch modes explicitly
         } else {
-            onResultCancelledOrFailed(true)
+            onResultCancelledOrFailed(true) // Keep existing logic for failure
         }
     }
 
@@ -299,5 +290,20 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
 
     private fun showErrorToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showImageSourceSelectionDialog() {
+        val options = arrayOf("Take Photo", "Choose from Gallery")
+        AlertDialog.Builder(this)
+                .setTitle("Add Image")
+                .setItems(options) { dialog, which ->
+                    when (which) {
+                        0 -> resultHandler.launchCamera() // "Take Photo"
+                        1 -> resultHandler.launchGallery() // "Choose from Gallery"
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .show()
     }
 }
