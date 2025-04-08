@@ -18,6 +18,10 @@
     <string name="delete_note">Delete Note</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
+    <string name="note_actions_label">Note Actions</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 
     <!-- Titles -->
     <string name="title_new_note">New Note</string>
@@ -52,6 +56,7 @@
 
     <!-- Content Descriptions -->
     <string name="image_preview_desc">Note image preview</string>
+    <string name="uploaded_notes_label">Uploaded Notes</string>
 
     <!-- UI Messages -->
     <string name="hero_subtitle">Capture your thoughts, effortlessly.</string>

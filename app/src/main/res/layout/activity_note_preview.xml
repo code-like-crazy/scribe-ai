@@ -49,7 +49,7 @@
             android:paddingTop="16dp"
             android:paddingBottom="32dp">
 
-            <!-- Title Section - Removed explicit "Title" label for cleaner look -->
+            <!-- Title Section -->
             <TextView
                 android:id="@+id/text_view_note_title"
                 android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                 android:id="@+id/text_view_note_datetime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/funnel_display"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="@color/muted_foreground"
@@ -86,116 +86,78 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="16dp"
                 android:background="@color/border" />
 
-            <!-- Content Section - Removed explicit "Content" label -->
-            <!-- Content -->
-            <TextView
-                android:id="@+id/text_view_note_content"
+            <!-- Content in Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="28dp"
-                android:fontFamily="@font/funnel_display"
-                android:lineSpacingMultiplier="1.2"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textColor="@color/foreground"
-                android:textSize="16sp"
-                tools:text="This is the content of the note, rendered using Markwon. It supports basic **Markdown** like *italics*, `code spans`, and [links](https://example.com).\n\nNew paragraphs are handled nicely.\n\n - Lists too!\n - Another item." />
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
 
-            <!-- Tags Section - Removed explicit "Tags" label -->
+                <TextView
+                    android:id="@+id/text_view_note_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/funnel_display"
+                    android:lineSpacingMultiplier="1.2"
+                    android:padding="16dp"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textColor="@color/foreground"
+                    android:textSize="16sp"
+                    tools:text="This is the content of the note, rendered using Markwon..." />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tags Section -->
             <LinearLayout
                 android:id="@+id/tags_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="24dp"
                 android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <!-- Tags -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Note tags"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:textColor="@color/muted_foreground" />
+
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:chipSpacingHorizontal="8dp"
                     app:chipSpacingVertical="6dp">
-                    <!-- Chips will be added programmatically -->
-                    <!-- Example styled chip for tools preview -->
-                    <com.google.android.material.chip.Chip
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/foreground"
-                        app:chipBackgroundColor="@color/secondary"
-                        tools:text="Meeting Notes" />
-
-                    <com.google.android.material.chip.Chip
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/foreground"
-                        app:chipBackgroundColor="@color/secondary"
-                        tools:text="Project Alpha" />
+                    <!-- Chips added programmatically -->
                 </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
 
-            <!-- Action Buttons - Grouped at the bottom -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical|end"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_share_note"
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/share_note"
-                    app:backgroundTint="@color/colorSecondary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_share_24"
-                    app:iconTint="@color/muted_foreground" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_edit_note"
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/edit_note"
-                    app:backgroundTint="@color/colorSecondary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_draw_24"
-                    app:iconTint="@color/muted_foreground" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_delete_note"
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/delete_note"
-                    app:backgroundTint="@color/colorSecondary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_delete_24"
-                    app:iconTint="@color/destructive" />
-            </LinearLayout>
-
-            <!-- Image Section (Moved to the bottom) -->
+            <!-- Image Section -->
             <LinearLayout
                 android:id="@+id/image_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <!-- Removed explicit "Attached Image" label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/uploaded_notes_label"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:textColor="@color/muted_foreground" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -218,6 +180,74 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-        </LinearLayout>
+            <!-- Action Buttons Container (Moved inside main LinearLayout) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/note_actions_label"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                        android:textColor="@color/muted_foreground" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_share_note"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/share_note"
+                            android:text="@string/share"
+                            app:icon="@drawable/ic_share_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_edit_note"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/edit_note"
+                            android:text="@string/edit"
+                            app:icon="@android:drawable/ic_menu_edit" /> <!-- Standard Edit Icon -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_delete_note"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/delete_note"
+                            android:text="@string/delete"
+                            android:textColor="@color/destructive"
+                            app:icon="@drawable/ic_delete_24"
+                            app:iconTint="@color/destructive" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout> <!--
+        End of main content LinearLayout -->
     </androidx.core.widget.NestedScrollView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
