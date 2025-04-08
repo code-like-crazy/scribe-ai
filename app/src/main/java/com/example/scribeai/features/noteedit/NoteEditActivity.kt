@@ -6,9 +6,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.scribeai.R
 import com.example.scribeai.core.data.AppDatabase
@@ -16,6 +18,7 @@ import com.example.scribeai.core.data.NoteRepository
 import com.example.scribeai.databinding.ActivityNoteEditBinding
 import com.example.scribeai.features.drawing.DrawingActivity
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -104,7 +107,28 @@ class NoteEditActivity : AppCompatActivity(), NoteEditResultCallback, GeminiProc
                         binding.buttonAddTag,
                         viewModel
                 )
-        geminiProcessor = NoteEditGeminiProcessor(this, lifecycleScope, binding.progressBar, this)
+        // Get references to processing overlay views
+        val overlay =
+                binding.root.findViewById<ConstraintLayout>(R.id.note_processing_overlay)
+                        ?: throw IllegalStateException("Processing overlay view not found")
+
+        val progressIndicator =
+                findViewById<CircularProgressIndicator>(R.id.note_processing_progress)
+                        ?: throw IllegalStateException("Progress indicator view not found")
+
+        val processingText =
+                findViewById<TextView>(R.id.note_processing_text)
+                        ?: throw IllegalStateException("Processing text view not found")
+
+        geminiProcessor =
+                NoteEditGeminiProcessor(
+                        this,
+                        lifecycleScope,
+                        overlay,
+                        progressIndicator,
+                        processingText,
+                        this
+                )
 
         val toolbarContainer = findViewById<View>(com.example.scribeai.R.id.formatting_toolbar)
         val chipGroup =

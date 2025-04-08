@@ -7,6 +7,7 @@
     <string name="mode_draw">Draw</string>
     <!-- App -->
     <string name="app_name">ScribeAI</string>
+    <string name="processing_text">Processing your notes... ✨</string>
 
     <!-- Actions -->
     <string name="action_save">Save</string>

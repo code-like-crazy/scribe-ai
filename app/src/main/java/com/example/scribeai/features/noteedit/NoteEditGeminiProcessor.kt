@@ -8,8 +8,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
-import androidx.lifecycle.LifecycleCoroutineScope
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.scribeai.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
@@ -18,7 +18,9 @@ import com.google.ai.client.generativeai.type.RequestOptions
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import java.io.IOException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -33,8 +35,10 @@ interface GeminiProcessorCallback {
 
 class NoteEditGeminiProcessor(
         private val context: Context,
-        private val lifecycleScope: LifecycleCoroutineScope,
-        private val progressBar: ProgressBar,
+        private val coroutineScope: CoroutineScope,
+        private val loadingOverlay: ConstraintLayout,
+        private val progressIndicator: CircularProgressIndicator,
+        private val processingText: TextView,
         private val callback: GeminiProcessorCallback
 ) {
 
@@ -102,14 +106,14 @@ class NoteEditGeminiProcessor(
         }
 
         Log.d(TAG, "Starting Gemini Vision process for URI: $imageUri")
-        progressBar.visibility = View.VISIBLE
+        loadingOverlay.visibility = View.VISIBLE
 
-        lifecycleScope.launch {
+        coroutineScope.launch {
             try {
                 val bitmap = uriToBitmap(imageUri)
                 if (bitmap == null) {
                     callback.onOcrError("Failed to load image.")
-                    progressBar.visibility = View.GONE
+                    loadingOverlay.visibility = View.GONE
                     return@launch
                 }
 
@@ -184,7 +188,7 @@ class NoteEditGeminiProcessor(
                 Log.e(TAG, "Gemini Vision Failed", e)
                 callback.onOcrError("AI text extraction failed: ${e.message}")
             } finally {
-                progressBar.visibility = View.GONE
+                loadingOverlay.visibility = View.GONE
             }
         }
     }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="note_edit_content_frame" type="id" />
+    <item name="note_processing_overlay" type="id" />
+    <item name="note_processing_progress" type="id" />
+    <item name="note_processing_text" type="id" />
     <item type="id" name="format_chip_bold" />
     <item type="id" name="format_chip_italic" />
     <item type="id" name="format_chip_h1" />

@@ -141,25 +141,69 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/content_input_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            <FrameLayout
+                android:id="@+id/note_edit_content_frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:boxStrokeColor="@color/border"
-                app:hintEnabled="false">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/content_edit_text"
+                android:layout_marginBottom="32dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/content_input_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:hint="@string/note_content_hint"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:minLines="5"
-                    android:minHeight="200dp"
-                    android:textColor="@color/primary" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    app:boxStrokeColor="@color/border"
+                    app:hintEnabled="false">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/content_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:hint="@string/note_content_hint"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:minLines="5"
+                        android:minHeight="200dp"
+                        android:textColor="@color/primary"
+                        android:padding="16dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Animated Loading Overlay -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/note_processing_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#CCFFFFFF"
+                    android:visibility="gone">
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/note_processing_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        app:indicatorColor="@color/primary"
+                        app:trackCornerRadius="4dp"
+                        app:layout_constraintBottom_toTopOf="@id/note_processing_text"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/note_processing_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/processing_text"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textColor="@color/primary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/note_processing_progress" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
 
             <!-- Divider -->
             <View
@@ -244,13 +288,6 @@
                     android:contentDescription="@string/image_preview_desc"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone" />
 
             </com.google.android.material.card.MaterialCardView>
 
